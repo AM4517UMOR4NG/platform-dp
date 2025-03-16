@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagram ER - Rental PS</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1000px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Diagram ER - Rental PS</h2>
+    <div class="mermaid">
+        erDiagram
+            USERS ||--|{ CUSTOMERS : includes
+            USERS ||--|{ ADMINS : includes
+            USERS ||--|{ OWNERS : includes
+            
+            CUSTOMERS ||--|{ RENTALS : creates
+            CUSTOMERS ||--|{ RESERVATIONS : makes
+            CUSTOMERS ||--|{ PAYMENTS : processes
+            CUSTOMERS ||--|{ REVIEWS : writes
+            CUSTOMERS ||--|| MEMBERSHIP_LEVEL : has
+
+            ADMINS ||--|{ RENTALS : manages
+            ADMINS ||--|{ INVENTORY : updates
+
+            INVENTORY ||--|{ PS_CONSOLE : contains
+            INVENTORY ||--|{ GAME : contains
+            INVENTORY ||--|{ ACCESSORY : contains
+
+            RENTALS ||--|{ RENTAL_ITEMS : includes
+            RENTAL_ITEMS }|--|| INVENTORY : references
+
+            RESERVATIONS ||--|{ RESERVATION_ITEMS : includes
+            RESERVATION_ITEMS }|--|| INVENTORY : references
+
+            RENTALS ||--|{ PAYMENTS : has
+
+            USERS {
+                int user_id PK
+                string username
+                string password_hash
+                string email
+                string phone_number
+                datetime last_login
+                boolean is_active
+                string user_type
+                datetime created_at
+            }
+
+            CUSTOMERS {
+                int customer_id PK
+                int user_id FK
+                string full_name
+                string address
+                string id_card_number
+                decimal deposit_balance
+                int membership_level_id FK
+                int rental_count
+                datetime registered_date
+            }
+
+            ADMINS {
+                int admin_id PK
+                int user_id FK
+                string full_name
+                string position
+                string access_level
+                datetime hire_date
+            }
+
+            OWNERS {
+                int owner_id PK
+                int user_id FK
+                string full_name
+            }
+
+            MEMBERSHIP_LEVEL {
+                int level_id PK
+                string level_name
+                decimal discount_percentage
+                int max_rental_days
+                int max_items
+                decimal deposit_requirement
+            }
+
+            INVENTORY {
+                int inventory_id PK
+                string item_type
+                string name
+                string serial_number
+                datetime purchase_date
+                decimal original_price
+                decimal rental_price_daily
+                string condition
+                string status
+                boolean is_available
+                int rental_count
+                datetime last_rented
+                datetime last_maintenance
+                string image_url
+            }
+
+            PS_CONSOLE {
+                int console_id PK
+                int inventory_id FK
+                string model
+                string version
+                int storage_size
+                string color
+                int controller_count
+                boolean hdmi_cable
+                boolean power_cable
+                string other_accessories
+            }
+
+            GAME {
+                int game_id PK
+                int inventory_id FK
+                string title
+                string genre
+                string publisher
+                date release_date
+                string rating
+                string console_type
+                int max_players
+                boolean multiplayer
+                boolean digital_copy
+            }
+
+            ACCESSORY {
+                int accessory_id PK
+                int inventory_id FK
+                string type
+                string compatible_with
+                string brand
+                string color
+                string connectivity
+            }
+
+            RENTALS {
+                int rental_id PK
+                int customer_id FK
+                int admin_id FK
+                datetime rental_date
+                datetime due_date
+                datetime return_date
+                decimal total_amount
+                decimal late_fee
+                decimal damage_fee
+                string status
+                string payment_status
+                string notes
+            }
+
+            RENTAL_ITEMS {
+                int rental_item_id PK
+                int rental_id FK
+                int inventory_id FK
+                decimal price_per_day
+                int rental_days
+                decimal subtotal
+                string condition_before
+                string condition_after
+                boolean is_damaged
+                string damage_description
+                decimal damage_charge
+            }
+
+            RESERVATIONS {
+                int reservation_id PK
+                int customer_id FK
+                datetime reservation_date
+                datetime start_date
+                datetime end_date
+                string status
+                decimal deposit_amount
+                string notes
+            }
+
+            RESERVATION_ITEMS {
+                int reservation_item_id PK
+                int reservation_id FK
+                int inventory_id FK
+            }
+
+            PAYMENTS {
+                int payment_id PK
+                int customer_id FK
+                int rental_id FK
+                decimal amount
+                string payment_type
+                datetime payment_date
+                string payment_status
+                string transaction_id
+                string receipt_number
+                string payment_notes
+            }
+
+            REVIEWS {
+                int review_id PK
+                int customer_id FK
+                int inventory_id FK
+                int rating
+                string comment
+                datetime review_date
+                boolean is_visible
+            }
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof mermaid !== "undefined") {
+                mermaid.initialize({ startOnLoad: true, theme: 'default' });
+                mermaid.contentLoaded();
+            } else {
+                document.getElementById("error-message").innerText = "Error: Mermaid.js tidak dimuat.";
+                console.error("Mermaid.js gagal dimuat.");
+            }
+        });
+    </script>
+</body>
+</html>

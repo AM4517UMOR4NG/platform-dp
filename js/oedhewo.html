@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart - Rental PS</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>Flowchart - Rental PS</h2>
+    <div class="mermaid">
+        flowchart TB
+            %% Definisi aktor
+            c((Customer)):::actor
+            a((Admin)):::actor
+            o((Owner)):::actor
+
+            %% Sistem Autentikasi
+            subgraph Authentication
+                login[Login]
+                register[Register User]
+                logout[Logout]
+                resetPassword[Reset Password]
+            end
+
+            %% Sistem Manajemen Pelanggan
+            subgraph CustomerManagement
+                viewProfile[View Profile]
+                updateProfile[Update Profile]
+                manageCustomers[Manage Customers]
+                blockCustomer[Block Customer]
+                viewMembership[View Membership Status]
+            end
+
+            %% Sistem Katalog
+            subgraph CatalogSystem
+                browsePS[Browse PlayStation]
+                browseGames[Browse Games]
+                searchCatalog[Search Catalog]
+                viewItemDetails[View Item Details]
+                filterByCategory[Filter by Category]
+                sortItems[Sort Items]
+            end
+
+            %% Sistem Pemesanan
+            subgraph BookingSystem
+                createReservation[Create Reservation]
+                cancelReservation[Cancel Reservation]
+                viewReservations[View Reservations]
+                approveReservation[Approve Reservation]
+                rejectReservation[Reject Reservation]
+            end
+
+            %% Sistem Rental
+            subgraph RentalSystem
+                rentItem[Rent Item]
+                returnItem[Return Item]
+                extendRental[Extend Rental]
+                viewRentalHistory[View Rental History]
+                checkDueDate[Check Due Date]
+                processLateReturn[Process Late Return]
+            end
+
+            %% Sistem Inventaris
+            subgraph InventorySystem
+                addInventoryItem[Add Item]
+                removeInventoryItem[Remove Item]
+                updateInventoryItem[Update Item]
+                checkAvailability[Check Availability]
+                manageStock[Manage Stock]
+                markItemDamaged[Mark Item Damaged]
+                markItemRepaired[Mark Item Repaired]
+            end
+
+            %% Sistem Pembayaran
+            subgraph PaymentSystem
+                processPayment[Process Payment]
+                issueReceipt[Issue Receipt]
+                recordTransaction[Record Transaction]
+                calculateRentalFee[Calculate Rental Fee]
+                calculateLateFee[Calculate Late Fee]
+                viewPaymentHistory[View Payment History]
+                processRefund[Process Refund]
+            end
+
+            %% Sistem Laporan
+            subgraph ReportingSystem
+                generateDailyReport[Generate Daily Report]
+                generateMonthlyReport[Generate Monthly Report]
+                viewFinancialSummary[View Financial Summary]
+                viewRentalStatistics[View Rental Statistics]
+                viewPopularItems[View Popular Items]
+                exportReport[Export Report]
+            end
+
+            %% Sistem Notifikasi
+            subgraph NotificationSystem
+                sendRentalReminder[Send Rental Reminder]
+                sendDueNotification[Send Due Notification]
+                sendLateNotification[Send Late Notification]
+                sendPromotion[Send Promotion]
+            end
+
+            %% Sistem Admin
+            subgraph AdminSystem
+                manageUsers[Manage Users]
+                configureSettings[Configure Settings]
+                viewSystemLogs[View System Logs]
+                backupData[Backup Data]
+                restoreData[Restore Data]
+            end
+
+            %% Hubungan Customer
+            c -->|Akses| Authentication
+            c -->|Kelola Profil| CustomerManagement
+            c -->|Menelusuri Katalog| CatalogSystem
+            c -->|Melakukan Pemesanan| BookingSystem
+            c -->|Menyewa Item| RentalSystem
+            c -->|Melihat Riwayat Pembayaran| viewPaymentHistory
+            c -->|Melihat Riwayat Rental| viewRentalHistory
+
+            %% Hubungan Admin
+            a -->|Akses| Authentication
+            a -->|Kelola Pelanggan| manageCustomers
+            a -->|Menelusuri Katalog| CatalogSystem
+            a -->|Menyetujui Pemesanan| approveReservation
+            a -->|Menolak Pemesanan| rejectReservation
+            a -->|Kelola Rental| RentalSystem
+            a -->|Kelola Inventaris| InventorySystem
+            a -->|Kelola Pembayaran| PaymentSystem
+            a -->|Buat Laporan Harian| generateDailyReport
+            a -->|Kelola Notifikasi| NotificationSystem
+
+            %% Hubungan Owner
+            o -->|Akses| Authentication
+            o -->|Kelola Admin| AdminSystem
+            o -->|Mengakses Laporan| ReportingSystem
+            o -->|Kelola Inventaris| InventorySystem
+            o -->|Mengelola Pengguna| manageUsers
+
+            %% Styling
+            classDef actor fill:#f96,stroke:#333,stroke-width:2px
+            classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof mermaid !== "undefined") {
+                mermaid.initialize({ startOnLoad: true, theme: 'default' });
+                mermaid.contentLoaded();
+            } else {
+                console.error("Mermaid.js gagal dimuat.");
+            }
+        });
+    </script>
+</body>
+</html>
