@@ -1,2 +1,3 @@
-On this repository all the files that I will upload or I have uploaded are my assignments. 
-There will be a lot of languages. 
+This is my second branch (HTML branch)
+So, this is my 1st assignments of this subject
+Only html files that are on here
