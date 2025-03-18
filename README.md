@@ -1,2 +1,4 @@
-On this repository all the files that I will upload or I have uploaded are my assignments. 
-There will be a lot of languages. 
+This is my third branch
+My 2nd assignment, only CSS and HTML are on here
+I combined them to be one class.
+But there are some files that I seperate both of them.
