@@ -1,0 +1,422 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Siswa SD 2024/2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            margin-left: 10px;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .nav a:hover {
+            opacity: 1;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn.login, .btn.register {
+            background: #f5a623;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #d88f1f;
+        }
+
+        /* Main Content */
+        .main-content {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .main-content h1 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .main-content p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        .navbar {
+            background: #4a90e2;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            color: white;
+        }
+
+        .navbar h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 8px 15px;
+            margin: 0 5px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-buttons button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .page {
+            animation: fadeIn 0.5s ease;
+            padding: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        .btn.secondary {
+            background: #f5a623;
+            color: white;
+        }
+
+        .btn.secondary:hover {
+            background: #d88f1f;
+        }
+
+        #summaryContent {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Decorative Elements */
+        .decorations {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            opacity: 0.3;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .lightbulb {
+            top: 150px;
+            left: 50px;
+            background: url('lightbulb.png');
+        }
+
+        .pencil {
+            top: 100px;
+            right: 50px;
+            background: url('pencil.png');
+        }
+
+        .chat-left {
+            bottom: 100px;
+            left: 50px;
+            background: url('chat.png');
+        }
+
+        .chat-bubble {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            background: white;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-icon {
+            width: 30px;
+            height: 30px;
+            background: url('chat-icon.png');
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span>PPDB SD 2024</span>
+            </div>
+            <nav class="nav">
+                <a href="#beranda">Beranda</a>
+                <a href="#peringkat">Peringkat</a>
+                <a href="#statistik">Statistik</a>
+                <a href="#jadwal">Jadwal</a>
+                <a href="#regulasi">Regulasi</a>
+                <button class="btn login">Login</button>
+                <button class="btn register">Registrasi Akun</button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>PENERIMAAN PESERTA DIDIK SEKOLAH DASAR<br><br>TAHUN PELAJARAN 2024/2025</h1>
+            <!-- Form Container -->
+            <div class="form-container">
+                <!-- Navigation -->
+                <nav class="navbar">
+                    <h2>Pendaftaran Siswa Baru</h2>
+                    <div class="nav-buttons">
+                        <button onclick="showPage('personal')">Data Pribadi</button>
+                        <button onclick="showPage('parents')">Data Orang Tua</button>
+                        <button onclick="showPage('summary')">Ringkasan</button>
+                    </div>
+                </nav>
+
+                <!-- Form Pages -->
+                <div class="form-content">
+                    <!-- Personal Data Page -->
+                    <div class="page" id="personal">
+                        <h3>Data Pribadi Siswa</h3>
+                        <form id="personalForm">
+                            <div class="form-group">
+                                <label for="fullName">Nama Lengkap</label>
+                                <input type="text" id="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birthDate">Tanggal Lahir</label>
+                                <input type="date" id="birthDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Jenis Kelamin</label>
+                                <select id="gender" required>
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="showPage('parents')">Lanjut</button>
+                        </form>
+                    </div>
+
+                    <!-- Parents Data Page -->
+                    <div class="page" id="parents" style="display: none;">
+                        <h3>Data Orang Tua</h3>
+                        <form id="parentsForm">
+                            <div class="form-group">
+                                <label for="fatherName">Nama Ayah</label>
+                                <input type="text" id="fatherName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="motherName">Nama Ibu</label>
+                                <input type="text" id="motherName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">No. Telepon</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <button type="button" onclick="showPage('personal')">Kembali</button>
+                            <button type="button" onclick="showSummary()">Lanjut</button>
+                        </form>
+                    </div>
+
+                    <!-- Summary Page -->
+                    <div class="page" id="summary" style="display: none;">
+                        <h3>Ringkasan Pendaftaran</h3>
+                        <div id="summaryContent"></div>
+                        <button type="button" onclick="showPage('parents')">Kembali</button>
+                        <button type="button" class="btn secondary" onclick="submitForm()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Decorative Elements -->
+        <div class="decorations">
+            <div class="icon lightbulb"></div>
+            <div class="icon pencil"></div>
+            <div class="icon chat-left"></div>
+            <div class="chat-bubble">
+                <p>Punya kendala PPDB?<br>Butuh Pengaduan</p>
+                <div class="chat-icon"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.getElementsByClassName('page');
+            for (let page of pages) {
+                page.style.display = 'none';
+            }
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        function showSummary() {
+            const fullName = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const gender = document.getElementById('gender').value;
+            const fatherName = document.getElementById('fatherName').value;
+            const motherName = document.getElementById('motherName').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!fullName || !birthDate || !gender || !fatherName || !motherName || !phone) {
+                alert('Harap isi semua data terlebih dahulu!');
+                return;
+            }
+
+            const summaryContent = `
+                <h4>Data Siswa:</h4>
+                <p>Nama: ${fullName}</p>
+                <p>Tanggal Lahir: ${birthDate}</p>
+                <p>Jenis Kelamin: ${gender === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                <h4>Data Orang Tua:</h4>
+                <p>Nama Ayah: ${fatherName}</p>
+                <p>Nama Ibu: ${motherName}</p>
+                <p>No. Telepon: ${phone}</p>
+            `;
+
+            document.getElementById('summaryContent').innerHTML = summaryContent;
+            showPage('summary');
+        }
+
+        function submitForm() {
+            alert('Pendaftaran berhasil disubmit!');
+            document.getElementById('personalForm').reset();
+            document.getElementById('parentsForm').reset();
+            showPage('personal');
+        }
+
+        // Show personal page by default
+        showPage('personal');
+
+        // Placeholder for login and register buttons
+        document.querySelector('.btn.login').addEventListener('click', () => {
+            alert('Fitur Login akan segera tersedia!');
+        });
+
+        document.querySelector('.btn.register').addEventListener('click', () => {
+            alert('Fitur Registrasi Akun akan segera tersedia!');
+        });
+    </script>
+</body>
+</html>
