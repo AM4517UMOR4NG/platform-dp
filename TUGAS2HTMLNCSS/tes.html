@@ -1,10 +1,9 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Siswa SD 2024/2025</title>
+    <title>Sistem Manajemen Rental PlayStation</title>
     <style>
         * {
             margin: 0;
@@ -14,11 +13,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            min-height: 100vh;
-            color: white;
-            position: relative;
-            overflow-x: hidden;
+            background-color: #f9f9f9;
+            color: #333;
         }
 
         .container {
@@ -27,395 +23,571 @@
             padding: 20px;
         }
 
-        /* Header */
-        .header {
+        h1, h2 {
+            color: #0056b3;
+        }
+
+        /* Login & Registration */
+        .auth-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 10px 0;
+            height: 100vh;
+            background-color: #0056b3;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .logo span {
-            margin-left: 10px;
-        }
-
-        .nav {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-
-        .nav a:hover {
-            opacity: 1;
-        }
-
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-
-        .btn.login, .btn.register {
-            background: #f5a623;
-            color: white;
-        }
-
-        .btn:hover {
-            background: #d88f1f;
-        }
-
-        /* Main Content */
-        .main-content {
+        .auth-box {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            margin-top: 50px;
         }
 
-        .main-content h1 {
-            font-size: 48px;
-            line-height: 1.2;
+        .auth-box h1 {
             margin-bottom: 20px;
         }
 
-        .main-content p {
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 30px;
-            opacity: 0.9;
+        .auth-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
-        /* Form Container */
-        .form-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            color: #333;
-        }
-
-        .navbar {
-            background: #4a90e2;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            color: white;
-        }
-
-        .navbar h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .nav-buttons button {
-            background: rgba(255, 255, 255, 0.2);
+        .auth-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: #fff;
             border: none;
-            padding: 8px 15px;
-            margin: 0 5px;
-            color: white;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .nav-buttons button:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .auth-box button:hover {
+            background-color: #003d82;
         }
 
-        .page {
-            animation: fadeIn 0.5s ease;
+        .auth-box a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        .auth-box a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #0056b3;
+            color: #fff;
             padding: 20px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .sidebar h2 {
+            color: #fff;
+            margin-bottom: 20px;
         }
 
-        h3 {
-            color: #333;
+        .sidebar a {
+            display: block;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #003d82;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
             margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .edit-btn {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
         }
 
         .form-group {
             margin-bottom: 15px;
         }
 
-        label {
+        .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #666;
         }
 
-        input, select {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 14px;
         }
 
-        button {
-            background: #4a90e2;
-            color: white;
-            border: none;
+        .add-btn {
+            background-color: #0056b3;
+            color: #fff;
             padding: 10px 20px;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s;
-            margin: 5px;
-        }
-
-        button:hover {
-            background: #357abd;
-        }
-
-        .btn.secondary {
-            background: #f5a623;
-            color: white;
-        }
-
-        .btn.secondary:hover {
-            background: #d88f1f;
-        }
-
-        #summaryContent {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
             margin-bottom: 20px;
         }
 
-        /* Decorative Elements */
-        .decorations {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: none;
+            }
+
+            .sidebar.active {
+                display: block;
+            }
+
+            .hamburger {
+                display: block;
+                font-size: 24px;
+                cursor: pointer;
+                margin-bottom: 20px;
+            }
+
+            .auth-box {
+                margin: 20px;
+                padding: 20px;
+            }
         }
 
-        .icon {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            opacity: 0.3;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-
-        .lightbulb {
-            top: 150px;
-            left: 50px;
-            background: url('lightbulb.png');
-        }
-
-        .pencil {
-            top: 100px;
-            right: 50px;
-            background: url('pencil.png');
-        }
-
-        .chat-left {
-            bottom: 100px;
-            left: 50px;
-            background: url('chat.png');
-        }
-
-        .chat-bubble {
-            position: fixed;
-            bottom: 50px;
-            right: 50px;
-            background: white;
-            color: #333;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 14px;
+        /* Tab Navigation */
+        .tab-nav {
             display: flex;
-            align-items: center;
             gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .chat-icon {
-            width: 30px;
-            height: 30px;
-            background: url('chat-icon.png');
-            background-size: cover;
+        .tab-nav button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #0056b3;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tab-nav button.active {
+            background-color: #003d82;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span>PPDB SD 2024</span>
+    <div class="tab-nav">
+        <button onclick="showTab('login')" class="active">Login</button>
+        <button onclick="showTab('register')">Registrasi</button>
+        <button onclick="showTab('dashboard')">Dashboard</button>
+        <button onclick="showTab('inventory')">Manajemen Inventaris</button>
+        <button onclick="showTab('transactions')">Transaksi Penyewaan</button>
+        <button onclick="showTab('customers')">Data Pelanggan</button>
+        <button onclick="showTab('reports')">Laporan</button>
+    </div>
+
+    <!-- Login -->
+    <div id="login" class="tab-content active">
+        <divcomparison-container">
+            <div class="auth-box">
+                <h1>Sistem Manajemen Rental PlayStation</h1>
+                <form id="login-form">
+                    <input type="text" placeholder="Username" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p><a href="#" onclick="showTab('register')">Belum punya akun? Registrasi</a></p>
+                    <p class="error" id="login-error">Username atau password salah</p>
+                </form>
             </div>
-            <nav class="nav">
-                <a href="#beranda">Beranda</a>
-                <a href="#peringkat">Peringkat</a>
-                <a href="#statistik">Statistik</a>
-                <a href="#jadwal">Jadwal</a>
-                <a href="#regulasi">Regulasi</a>
-                <button class="btn login">Login</button>
-                <button class="btn register">Registrasi Akun</button>
-            </nav>
-        </header>
+        </div>
+    </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <h1>PENERIMAAN PESERTA DIDIK SEKOLAH DASAR<br><br>TAHUN PELAJARAN 2024/2025</h1>
-            <!-- Form Container -->
-            <div class="form-container">
-                <!-- Navigation -->
-                <nav class="navbar">
-                    <h2>Pendaftaran Siswa Baru</h2>
-                    <div class="nav-buttons">
-                        <button onclick="showPage('personal')">Data Pribadi</button>
-                        <button onclick="showPage('parents')">Data Orang Tua</button>
-                        <button onclick="showPage('summary')">Ringkasan</button>
+    <!-- Registration -->
+    <div id="register" class="tab-content">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h1>Registrasi</h1>
+                <form id="register-form">
+                    <input type="text" placeholder="Nama" required>
+                    <input type="text" placeholder="Alamat" required>
+                    <input type="tel" placeholder="No. Telepon" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="text" placeholder="Username" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Daftar</button>
+                    <p><a href="#" onclick="showTab('login')">Sudah punya akun? Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="tab-content">
+        <div class="dashboard">
+            <div class="sidebar" id="sidebar">
+                <h2>Menu</h2>
+                <a href="#" onclick="showTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="showTab('inventory')">Manajemen Inventaris</a>
+                <a href="#" onclick="showTab('transactions')">Transaksi Penyewaan</a>
+                <a href="#" onclick="showTab('customers')">Data Pelanggan</a>
+                <a href="#" onclick="showTab('reports')">Laporan</a>
+                <a href="#" onclick="showTab('login')">Logout</a>
+            </div>
+            <div class="main-content">
+                <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+                <h1>Dashboard Admin</h1>
+                <div class="stats">
+                    <div class="stat-box">
+                        <h3>Unit PS Tersedia</h3>
+                        <p>10</p>
                     </div>
-                </nav>
-
-                <!-- Form Pages -->
-                <div class="form-content">
-                    <!-- Personal Data Page -->
-                    <div class="page" id="personal">
-                        <h3>Data Pribadi Siswa</h3>
-                        <form id="personalForm">
-                            <div class="form-group">
-                                <label for="fullName">Nama Lengkap</label>
-                                <input type="text" id="fullName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="birthDate">Tanggal Lahir</label>
-                                <input type="date" id="birthDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender">Jenis Kelamin</label>
-                                <select id="gender" required>
-                                    <option value="">Pilih Jenis Kelamin</option>
-                                    <option value="L">Laki-laki</option>
-                                    <option value="P">Perempuan</option>
-                                </select>
-                            </div>
-                            <button type="button" onclick="showPage('parents')">Lanjut</button>
-                        </form>
-                    </div>
-
-                    <!-- Parents Data Page -->
-                    <div class="page" id="parents" style="display: none;">
-                        <h3>Data Orang Tua</h3>
-                        <form id="parentsForm">
-                            <div class="form-group">
-                                <label for="fatherName">Nama Ayah</label>
-                                <input type="text" id="fatherName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="motherName">Nama Ibu</label>
-                                <input type="text" id="motherName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">No. Telepon</label>
-                                <input type="tel" id="phone" required>
-                            </div>
-                            <button type="button" onclick="showPage('personal')">Kembali</button>
-                            <button type="button" onclick="showSummary()">Lanjut</button>
-                        </form>
-                    </div>
-
-                    <!-- Summary Page -->
-                    <div class="page" id="summary" style="display: none;">
-                        <h3>Ringkasan Pendaftaran</h3>
-                        <div id="summaryContent"></div>
-                        <button type="button" onclick="showPage('parents')">Kembali</button>
-                        <button type="button" class="btn secondary" onclick="submitForm()">Submit</button>
+                    <div class="stat-box">
+                        <h3>Total Transaksi Hari Ini</h3>
+                        <p>5</p>
                     </div>
                 </div>
+                <h2>Transaksi Terbaru</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Transaksi</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Durasi</th>
+                            <th>Biaya</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Budi</td>
+                            <td>2 jam</td>
+                            <td>Rp 50.000</td>
+                            <td>Seles исполнительная</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </main>
+        </div>
+    </div>
 
-        <!-- Decorative Elements -->
-        <div class="decorations">
-            <div class="icon lightbulb"></div>
-            <div class="icon pencil"></div>
-            <div class="icon chat-left"></div>
-            <div class="chat-bubble">
-                <p>Punya kendala PPDB?<br>Butuh Pengaduan</p>
-                <div class="chat-icon"></div>
+    <!-- Inventory Management -->
+    <div id="inventory" class="tab-content">
+        <div class="dashboard">
+            <div class="sidebar" id="sidebar-inventory">
+                <h2>Menu</h2>
+                <a href="#" onclick="showTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="showTab('inventory')">Manajemen Inventaris</a>
+                <a href="#" onclick="showTab('transactions')">Transaksi Penyewaan</a>
+                <a href="#" onclick="showTab('customers')">Data Pelanggan</a>
+                <a href="#" onclick="showTab('reports')">Laporan</a>
+                <a href="#" onclick="showTab('login')">Logout</a>
+            </div>
+            <div class="main-content">
+                <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+                <h1>Manajemen Inventaris</h1>
+                <button class="add-btn">Tambah Unit PS</button>
+                <button class="add-btn">Tambah Game</button>
+                <button class="add-btn">Tambah Aksesoris</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama/Judul</th>
+                            <th>Tipe/Jenis</th>
+                            <th>Kondisi</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PS001</td>
+                            <td>PlayStation 5</td>
+                            <td>Konsol</td>
+                            <td>Baik</td>
+                            <td>Tersedia</td>
+                            <td>
+                                <button class="action-btn edit-btn">Edit</button>
+                                <button class="action-btn delete-btn">Hapus</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions -->
+    <div id="transactions" class="tab-content">
+        <div class="dashboard">
+            <div class="sidebar" id="sidebar-transactions">
+                <h2>Menu</h2>
+                <a href="#" onclick="showTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="showTab('inventory')">Manajemen Inventaris</a>
+                <a href="#" onclick="showTab('transactions')">Transaksi Penyewaan</a>
+                <a href="#" onclick="showTab('customers')">Data Pelanggan</a>
+                <a href="#" onclick="showTab('reports')">Laporan</a>
+                <a href="#" onclick="showTab('login')">Logout</a>
+            </div>
+            <div class="main-content">
+                <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+                <h1>Transaksi Penyewaan</h1>
+                <div class="form-group">
+                    <h2>Transaksi Baru</h2>
+                    <form>
+                        <div class="form-group">
+                            <label>Pilih Pelanggan</label>
+                            <select>
+                                <option>Budi</option>
+                                <option>Ahmad</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Pilih Item</label>
+                            <input type="checkbox" id="ps5"> PlayStation 5<br>
+                            <input type="checkbox" id="game"> FIFA 23
+                        </div>
+                        <div class="form-group">
+                            <label>Durasi (jam)</label>
+                            <input type="number" required>
+                        </div>
+                        <button type="submit" class="add-btn">Tambah Transaksi</button>
+                    </form>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Transaksi</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Durasi</th>
+                            <th>Biaya</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Budi</td>
+                            <td>2 jam</td>
+                            <td>Rp 50.000</td>
+                            <td>Berlangsung</td>
+                            <td>
+                                <button class="action-btn edit-btn">Proses Pengembalian</button>
+                                <button class="action-btn edit-btn">Catat Pembayaran</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers -->
+    <div id="customers" class="tab-content">
+        <div class="dashboard">
+            <div class="sidebar" id="sidebar-customers">
+                <h2>Menu</h2>
+                <a href="#" onclick="showTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="showTab('inventory')">Manajemen Inventaris</a>
+                <a href="#" onclick="showTab('transactions')">Transaksi Penyewaan</a>
+                <a href="#" onclick="showTab('customers')">Data Pelanggan</a>
+                <a href="#" onclick="showTab('reports')">Laporan</a>
+                <a href="#" onclick="showTab('login')">Logout</a>
+            </div>
+            <div class="main-content">
+                <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+                <h1>Data Pelanggan</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Pelanggan</th>
+                            <th>Nama</th>
+                            <th>Alamat</th>
+                            <th>No. Telp</th>
+                            <th>Email</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>C001</td>
+                            <td>Budi</td>
+                            <td>Jl. Merdeka 123</td>
+                            <td>08123456789</td>
+                            <td>budi@example.com</td>
+                            <td>
+                                <button class="action-btn edit-btn">Edit</button>
+                                <button class="action-btn delete-btn">Hapus</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports -->
+    <div id="reports" class="tab-content">
+        <div class="dashboard">
+            <div class="sidebar" id="sidebar-reports">
+                <h2>Menu</h2>
+                <a href="#" onclick="showTab('dashboard')">Dashboard</a>
+                <a href="#" onclick="showTab('inventory')">Manajemen Inventaris</a>
+                <a href="#" onclick="showTab('transactions')">Transaksi Penyewaan</a>
+                <a href="#" onclick="showTab('customers')">Data Pelanggan</a>
+                <a href="#" onclick="showTab('reports')">Laporan</a>
+                <a href="#" onclick="showTab('login')">Logout</a>
+            </div>
+            <div class="main-content">
+                <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+                <h1>Laporan</h1>
+                <div class="form-group">
+                    <label>Pilih Periode</label>
+                    <select>
+                        <option>Januari 2025</option>
+                        <option>Februari 2025</option>
+                    </select>
+                </div>
+                <button class="add-btn">Unduh Laporan</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>ID Transaksi</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Total Biaya</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-01-01</td>
+                            <td>001</td>
+                            <td>Budi</td>
+                            <td>Rp 50.000</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
-        function showPage(pageId) {
-            const pages = document.getElementsByClassName('page');
-            for (let page of pages) {
-                page.style.display = 'none';
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-nav button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-nav button[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelectorAll('.sidebar').forEach(sidebar => {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = this.querySelector('input[type="text"]').value;
+            const password = this.querySelector('input[type="password"]').value;
+            if (username === 'admin' && password === 'admin123') {
+                showTab('dashboard');
+            } else {
+                document.getElementById('login-error').style.display = 'block';
             }
-            document.getElementById(pageId).style.display = 'block';
-        }
-
-        function showSummary() {
-            const fullName = document.getElementById('fullName').value;
-            const birthDate = document.getElementById('birthDate').value;
-            const gender = document.getElementById('gender').value;
-            const fatherName = document.getElementById('fatherName').value;
-            const motherName = document.getElementById('motherName').value;
-            const phone = document.getElementById('phone').value;
-
-            if (!fullName || !birthDate || !gender || !fatherName || !motherName || !phone) {
-                alert('Harap isi semua data terlebih dahulu!');
-                return;
-            }
-
-            const summaryContent = `
-                <h4>Data Siswa:</h4>
-                <p>Nama: ${fullName}</p>
-                <p>Tanggal Lahir: ${birthDate}</p>
-                <p>Jenis Kelamin: ${gender === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
-                <h4>Data Orang Tua:</h4>
-                <p>Nama Ayah: ${fatherName}</p>
-                <p>Nama Ibu: ${motherName}</p>
-                <p>No. Telepon: ${phone}</p>
-            `;
-
-            document.getElementById('summaryContent').innerHTML = summaryContent;
-            showPage('summary');
-        }
-
-        function submitForm() {
-            alert('Pendaftaran berhasil disubmit!');
-            document.getElementById('personalForm').reset();
-            document.getElementById('parentsForm').reset();
-            showPage('personal');
-        }
-
-        // Show personal page by default
-        showPage('personal');
-
-        // Placeholder for login and register buttons
-        document.querySelector('.btn.login').addEventListener('click', () => {
-            alert('Fitur Login akan segera tersedia!');
         });
 
-        document.querySelector('.btn.register').addEventListener('click', () => {
-            alert('Fitur Registrasi Akun akan segera tersedia!');
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Registrasi berhasil! Silakan login.');
+            showTab('login');
         });
     </script>
 </body>
