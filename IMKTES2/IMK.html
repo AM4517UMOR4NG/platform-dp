@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Storybook</title>
+    <link rel="stylesheet" href="IMK.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>📚 Interactive Storybook</h1>
+            <p>Belajar sambil bermain untuk anak usia 4-7 tahun</p>
+            <nav class="navigation">
+                <button class="nav-btn active" data-section="story">📖 Cerita</button>
+                <button class="nav-btn" data-section="interactive">🎮 Interaktif</button>
+                <button class="nav-btn" data-section="games">🎯 Mini Game</button>
+                <button class="nav-btn" data-section="listen">🎤 Dengar & Ulangi</button>
+                <button class="nav-btn" data-section="progress">📊 Progress</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Story Section -->
+            <section id="story-section" class="story-section active">
+                <div class="storybook">
+                    <div class="story-header">
+                        <h2 class="story-title">Petualangan Kucing Kecil</h2>
+                    </div>
+                    <div class="story-illustration">🐱</div>
+                    <div class="story-text" id="story-text">
+                        Ada seekor kucing kecil bernama Mimi yang suka bermain di taman. 
+                        Hari ini Mimi ingin mencari teman baru untuk bermain bersama.
+                        Mimi berjalan ke taman dan bertemu dengan seekor anjing yang ramah.
+                    </div>
+                    <div class="audio-controls">
+                        <button class="audio-btn" id="play-story-btn">🔊 Putar Cerita</button>
+                        <button class="audio-btn" id="pause-story-btn">⏸️ Pause</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Section -->
+            <section id="interactive-section" class="story-section">
+                <div class="interactive-section">
+                    <h2>🎯 Lengkapi Kalimat</h2>
+                    <div class="drag-drop-area">
+                        <div class="sentence-template">
+                            Kucing kecil <span class="word-blank" data-answer="bermain"></span> di taman bersama <span class="word-blank" data-answer="anjing"></span> yang ramah.
+                        </div>
+                        <div class="word-options">
+                            <div class="draggable-word" draggable="true">bermain</div>
+                            <div class="draggable-word" draggable="true">anjing</div>
+                            <div class="draggable-word" draggable="true">makan</div>
+                            <div class="draggable-word" draggable="true">kucing</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="audio-btn" id="check-answers-btn">✓ Periksa Jawaban</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mini Games Section -->
+            <section id="games-section" class="story-section">
+                <div class="mini-game">
+                    <h2 class="game-title">🎮 Cocokkan Gambar & Kata</h2>
+                    <p>Klik gambar yang sesuai dengan kata!</p>
+                    <div style="margin: 20px 0; font-size: 1.5em; font-weight: bold;">
+                        Kata: <span id="current-word">KUCING</span>
+                    </div>
+                    <div class="picture-matching">
+                        <div class="picture-card" data-answer="kucing">🐱</div>
+                        <div class="picture-card" data-answer="anjing">🐶</div>
+                        <div class="picture-card" data-answer="taman">🌳</div>
+                        <div class="picture-card" data-answer="bermain">⚽</div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <p>Skor: <span id="game-score">0</span> / 4</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Listen & Repeat Section -->
+            <section id="listen-section" class="story-section">
+                <div class="listen-repeat">
+                    <h2>🎤 Dengarkan & Ulangi</h2>
+                    <p>Dengarkan kata berikut, lalu ulangi dengan suara Anda!</p>
+                    <div style="margin: 30px 0;">
+                        <div style="font-size: 2em; margin-bottom: 20px;">
+                            Kata: <strong id="practice-word">BERMAIN</strong>
+                        </div>
+                        <button class="audio-btn" id="play-practice-word-btn">🔊 Dengar Kata</button>
+                    </div>
+                    <div>
+                        <button class="record-btn" id="record-btn">🎤</button>
+                        <p>Tekan untuk merekam suara Anda</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="audio-btn" id="play-recording-btn" style="display: none;">▶️ Putar Rekaman</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progress-section" class="story-section">
+                <div class="progress-dashboard">
+                    <h2>📊 Dashboard Progress</h2>
+                    <p>Pantau kemajuan belajar anak Anda</p>
+                    <div class="progress-stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="words-learned">12</div>
+                            <div>Kata Baru Dikuasai</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="stories-completed">3</div>
+                            <div>Cerita Selesai</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="games-played">8</div>
+                            <div>Game Dimainkan</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="accuracy-rate">85%</div>
+                            <div>Tingkat Akurasi</div>
+                        </div>
+                    </div>
+                    <canvas id="progress-chart"></canvas>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <h3>🏆 Pencapaian Terbaru</h3>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 15px;">
+                            <p>🌟 Menyelesaikan cerita "Petualangan Kucing Kecil"</p>
+                            <p>🎯 Mencapai 85% akurasi dalam mini game</p>
+                            <p>🎤 Berhasil merekam 5 kata dengan jelas</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Feedback Animation Container -->
+    <div class="feedback-animation" id="feedback-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="IMK.js" defer></script>
+</body>
+</html>

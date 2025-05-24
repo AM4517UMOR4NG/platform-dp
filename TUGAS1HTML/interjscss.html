@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Storybook</title>
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,1217 +15,2701 @@
 
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            background: linear-gradient(135deg, #81CFFE 0%, #8BC34A 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        .app-container {
-            max-width: 1024px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            padding: 16px;
+        }
+
+        /* Landing Page */
+        .splash-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .character {
+            width: 200px;
+            height: 200px;
+            background: #FFD54F;
+            border-radius: 50%;
+            margin: 20px 0;
             position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .character::before {
+            content: "👧";
+            font-size: 100px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn {
+            background: #FFD54F;
+            color: #333;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+
+        .btn:hover, .btn:focus {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            outline: none;
+        }
+
+        /* Home Page */
+        .home-page {
+            display: none;
         }
 
         .header {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
             background: white;
-            color: #667eea;
-            transform: translateY(-2px);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .main-content {
-            padding: 20px;
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .story-section {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .story-section.active {
-            display: block;
-        }
-
-        .storybook {
-            background: linear-gradient(45deg, #a8edea 0%, #fed6e3 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .story-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .story-title {
-            font-size: 2.2em;
-            color: #333;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .story-illustration {
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            border-radius: 15px;
-            margin: 20px auto;
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #F8BBD0;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4em;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 30px;
+        }
+
+        .level-info {
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #8BC34A;
+            width: 65%;
+            transition: width 0.5s ease;
+        }
+
+        .carousel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .carousel-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .story-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .story-card {
+            background: linear-gradient(135deg, #CE93D8, #F8BBD0);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .story-card:hover, .story-card:focus {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            outline: none;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover, .category-card:focus {
+            transform: scale(1.05);
+            outline: none;
+        }
+
+        .category-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        /* Story Library */
+        .library-page {
+            display: none;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* Story Reader */
+        .reader-page {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .reader-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .reader-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: 400px;
+        }
+
+        .text-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .story-text {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .word-highlight {
+            cursor: pointer;
+            outline: none;
+        }
+
+        .word-highlight:hover, .word-highlight:focus {
+            background: #FFD54F;
+            padding: 2px 4px;
+            border-radius: 4px;
+            animation: pulse 1s;
+        }
+
+        .highlighted {
+            background: #FFD54F;
+            padding: 2px 4px;
+            border-radius: 4px;
+            animation: pulse 1s;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .play-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #8BC34A;
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover, .play-btn:focus {
+            transform: scale(1.1);
+            outline: none;
+        }
+
+        .audio-progress {
+            flex: 1;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .audio-progress-fill {
+            height: 100%;
+            background: #8BC34A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .illustration-panel {
+            background: linear-gradient(135deg, #81CFFE, #8BC34A);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
         }
 
-        .story-illustration::before {
-            content: '';
+        .illustration {
+            font-size: 120px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .hotspot {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        .story-text {
-            font-size: 1.4em;
-            line-height: 1.8;
-            color: #444;
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(255,255,255,0.7);
-            border-radius: 15px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .audio-controls {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .audio-btn {
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            background: #FFD54F;
+            border-radius: 50%;
             cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .audio-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .audio-btn:active {
-            transform: translateY(0);
-        }
-
-        .interactive-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 20px 0;
-            color: white;
-        }
-
-        .drag-drop-area {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            border: 2px dashed rgba(255,255,255,0.5);
-        }
-
-        .sentence-template {
-            font-size: 1.5em;
-            line-height: 2;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .word-blank {
-            display: inline-block;
-            width: 120px;
-            height: 40px;
-            background: rgba(255,255,255,0.8);
-            border: 2px dashed #333;
-            border-radius: 8px;
-            margin: 0 5px;
-            vertical-align: middle;
-            position: relative;
-            color: #333;
-            text-align: center;
-            line-height: 36px;
-            font-weight: bold;
-        }
-
-        .word-options {
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            animation: bounce 2s infinite;
         }
 
-        .draggable-word {
-            background: linear-gradient(45deg, #feca57, #ff9ff3);
-            color: #333;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: grab;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            user-select: none;
+        /* Activity Pages */
+        .activity-page {
+            display: none;
         }
 
-        .draggable-word:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .draggable-word.dragging {
-            transform: rotate(5deg);
-            opacity: 0.8;
-        }
-
-        .mini-game {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-            border-radius: 20px;
+        .game-container {
+            background: white;
+            border-radius: 12px;
             padding: 30px;
-            margin: 20px 0;
-            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-align: center;
         }
 
         .game-title {
-            font-size: 2em;
+            font-size: 28px;
+            color: #333;
             margin-bottom: 20px;
         }
 
-        .picture-matching {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+        .drag-drop-area {
+            background: #f9f9f9;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 30px;
             margin: 20px 0;
+            min-height: 100px;
+            position: relative;
         }
 
-        .picture-card {
-            aspect-ratio: 1;
-            background: white;
-            border-radius: 15px;
+        .word-pieces {
             display: flex;
-            align-items: center;
+            gap: 12px;
             justify-content: center;
-            font-size: 2em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            color: #333;
-        }
-
-        .picture-card:hover {
-            transform: scale(1.05);
-        }
-
-        .picture-card.matched {
-            background: linear-gradient(45deg, #00cec9, #55efc4);
-            animation: bounce 0.6s ease;
-        }
-
-        .listen-repeat {
-            background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 20px 0;
-            text-align: center;
-            color: white;
-        }
-
-        .record-btn {
-            background: #e17055;
-            color: white;
-            border: none;
-            padding: 20px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            margin: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 80px;
-            height: 80px;
-        }
-
-        .record-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .record-btn.recording {
-            animation: pulse 1s infinite;
-            background: #d63031;
-        }
-
-        .progress-dashboard {
-            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 20px 0;
-            color: white;
-        }
-
-        .progress-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            flex-wrap: wrap;
             margin-top: 20px;
         }
 
+        .word-piece {
+            background: #FFD54F;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: grab;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .word-piece:hover, .word-piece:focus {
+            transform: scale(1.05);
+            outline: none;
+        }
+
+        .word-piece.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .game-progress {
+            width: 100%;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .game-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8BC34A, #FFD54F);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Dashboard */
+        .dashboard-page {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
         .stat-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .stat-number {
-            font-size: 2.5em;
+            font-size: 36px;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: #8BC34A;
+            margin-bottom: 8px;
         }
 
-        .feedback-animation {
+        .stat-label {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .badge-collection {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #CE93D8, #F8BBD0);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .badge-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        /* Recording Mode */
+        .record-mode {
+            display: none;
+            text-align: center;
+        }
+
+        .mic-container {
+            margin: 30px 0;
+        }
+
+        .mic-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #FF5722;
+            color: white;
+            border: none;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mic-btn.recording {
+            animation: pulse 1s infinite;
+            background: #F44336;
+        }
+
+        .recording-wave {
+            width: 100%;
+            height: 60px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: #8BC34A;
+            margin: 0 2px;
+            border-radius: 2px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .score-display {
+            font-size: 48px;
+            color: #FFD54F;
+            margin: 20px 0;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.active {
+            color: #8BC34A;
+            background: rgba(139, 195, 74, 0.1);
+        }
+
+        .nav-btn:hover, .nav-btn:focus {
+            color: #8BC34A;
+            outline: none;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* Modal */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
             z-index: 1000;
         }
 
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* Confetti */
         .confetti {
-            position: absolute;
+            position: fixed;
             width: 10px;
             height: 10px;
-            background: #feca57;
-            animation: confettiFall 3s linear infinite;
+            background: #FFD54F;
+            animation: confetti-fall 3s linear infinite;
+            z-index: 1000;
         }
 
-        .success-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(45deg, #00cec9, #55efc4);
-            color: white;
-            padding: 30px 50px;
-            border-radius: 25px;
-            font-size: 2em;
-            font-weight: bold;
-            z-index: 1001;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: successPop 0.5s ease;
-        }
-
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-            40%, 43% { transform: translateY(-10px); }
-            70% { transform: translateY(-5px); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
+            0% { transform: scale(1); }
             50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        @keyframes confettiFall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        @keyframes wave {
+            0%, 100% { height: 20px; }
+            50% { height: 40px; }
         }
 
-        @keyframes successPop {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
-        .hidden {
-            display: none;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .navigation {
-                flex-wrap: wrap;
+            .reader-content {
+                grid-template-columns: 1fr;
             }
             
-            .nav-btn {
-                font-size: 14px;
-                padding: 10px 16px;
+            .container {
+                padding: 12px;
             }
             
-            .story-illustration {
-                width: 250px;
-                height: 160px;
-                font-size: 3em;
+            .logo {
+                font-size: 36px;
             }
             
-            .picture-matching {
-                grid-template-columns: repeat(2, 1fr);
+            .nav-bar {
+                padding-bottom: calc(16px + env(safe-area-inset-bottom));
             }
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #999;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <h1>📚 Interactive Storybook</h1>
-            <p>Belajar sambil bermain untuk anak usia 4-7 tahun</p>
-            <nav class="navigation">
-                <button class="nav-btn active" onclick="showSection('story')">📖 Cerita</button>
-                <button class="nav-btn" onclick="showSection('interactive')">🎮 Interaktif</button>
-                <button class="nav-btn" onclick="showSection('games')">🎯 Mini Game</button>
-                <button class="nav-btn" onclick="showSection('listen')">🎤 Dengar & Ulangi</button>
-                <button class="nav-btn" onclick="showSection('progress')">📊 Progress</button>
-            </nav>
-        </header>
-
-        <main class="main-content">
-            <!-- Story Section -->
-            <section id="story-section" class="story-section active">
-                <div class="storybook">
-                    <div class="story-header">
-                        <h2 class="story-title">Petualangan Kucing Kecil</h2>
-                    </div>
-                    
-                    <div class="story-illustration">
-                        🐱
-                    </div>
-                    
-                    <div class="story-text" id="story-text">
-                        Ada seekor kucing kecil bernama Mimi yang suka bermain di taman. 
-                        Hari ini Mimi ingin mencari teman baru untuk bermain bersama.
-                        Mimi berjalan ke taman dan bertemu dengan seekor anjing yang ramah.
-                    </div>
-                    
-                    <div class="audio-controls">
-                        <button class="audio-btn" onclick="playStoryAudio()">🔊 Putar Cerita</button>
-                        <button class="audio-btn" onclick="pauseStoryAudio()">⏸️ Pause</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Interactive Section -->
-            <section id="interactive-section" class="story-section">
-                <div class="interactive-section">
-                    <h2>🎯 Lengkapi Kalimat</h2>
-                    <div class="drag-drop-area">
-                        <div class="sentence-template">
-                            Kucing kecil <span class="word-blank" data-answer="bermain"></span> di taman bersama <span class="word-blank" data-answer="anjing"></span> yang ramah.
-                        </div>
-                        
-                        <div class="word-options">
-                            <div class="draggable-word" draggable="true">bermain</div>
-                            <div class="draggable-word" draggable="true">anjing</div>
-                            <div class="draggable-word" draggable="true">makan</div>
-                            <div class="draggable-word" draggable="true">kucing</div>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button class="audio-btn" onclick="checkAnswers()">✓ Periksa Jawaban</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Mini Games Section -->
-            <section id="games-section" class="story-section">
-                <div class="mini-game">
-                    <h2 class="game-title">🎮 Cocokkan Gambar & Kata</h2>
-                    <p>Klik gambar yang sesuai dengan kata!</p>
-                    
-                    <div style="margin: 20px 0; font-size: 1.5em; font-weight: bold;">
-                        Kata: <span id="current-word">KUCING</span>
-                    </div>
-                    
-                    <div class="picture-matching">
-                        <div class="picture-card" onclick="selectPicture(this, 'kucing')">🐱</div>
-                        <div class="picture-card" onclick="selectPicture(this, 'anjing')">🐶</div>
-                        <div class="picture-card" onclick="selectPicture(this, 'taman')">🌳</div>
-                        <div class="picture-card" onclick="selectPicture(this, 'bermain')">⚽</div>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <p>Skor: <span id="game-score">0</span> / 4</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Listen & Repeat Section -->
-            <section id="listen-section" class="story-section">
-                <div class="listen-repeat">
-                    <h2>🎤 Dengarkan & Ulangi</h2>
-                    <p>Dengarkan kata berikut, lalu ulangi dengan suara Anda!</p>
-                    
-                    <div style="margin: 30px 0;">
-                        <div style="font-size: 2em; margin-bottom: 20px;">
-                            Kata: <strong id="practice-word">BERMAIN</strong>
-                        </div>
-                        
-                        <button class="audio-btn" onclick="playPracticeWord()">🔊 Dengar Kata</button>
-                    </div>
-                    
-                    <div>
-                        <button class="record-btn" onclick="toggleRecording()" id="record-btn">🎤</button>
-                        <p>Tekan untuk merekam suara Anda</p>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <button class="audio-btn" onclick="playRecording()" id="play-recording" style="display: none;">▶️ Putar Rekaman</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Progress Section -->
-            <section id="progress-section" class="story-section">
-                <div class="progress-dashboard">
-                    <h2>📊 Dashboard Progress</h2>
-                    <p>Pantau kemajuan belajar anak Anda</p>
-                    
-                    <div class="progress-stats">
-                        <div class="stat-card">
-                            <div class="stat-number" id="words-learned">12</div>
-                            <div>Kata Baru Dikuasai</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="stories-completed">3</div>
-                            <div>Cerita Selesai</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="games-played">8</div>
-                            <div>Game Dimainkan</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="accuracy-rate">85%</div>
-                            <div>Tingkat Akurasi</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 30px; text-align: center;">
-                        <h3>🏆 Pencapaian Terbaru</h3>
-                        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 15px;">
-                            <p>🌟 Menyelesaikan cerita "Petualangan Kucing Kecil"</p>
-                            <p>🎯 Mencapai 85% akurasi dalam mini game</p>
-                            <p>🎤 Berhasil merekam 5 kata dengan jelas</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+    <!-- Landing Page -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="logo">📚 Interactive Storybook</div>
+        <div class="character"></div>
+        <p style="color: white; font-size: 18px; margin-bottom: 30px;">
+            Belajar kosakata sambil bercerita!
+        </p>
+        <button class="btn" onclick="startTutorial()">Mulai Petualangan</button>
+        <button class="btn" onclick="showProfiles()">Pilih Profil</button>
+        <button class="btn" onclick="showParentalDashboard()">Dashboard Orang Tua</button>
     </div>
 
-    <!-- Feedback Animation Container -->
-    <div class="feedback-animation" id="feedback-container"></div>
+    <!-- Profile Selection -->
+    <div id="profilesPage" class="home-page" style="display: none;">
+        <div class="container">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px;">Pilih Profil</h2>
+            <div class="story-cards" id="profileGrid"></div>
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn" onclick="showCreateProfile()">+ Buat Profil Baru</button>
+                <button class="btn" onclick="showHome()">Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Profile -->
+    <div id="createProfilePage" class="home-page" style="display: none;">
+        <div class="container">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px;">Buat Profil Baru</h2>
+            <div class="game-container">
+                <div class="filter-group">
+                    <label class="filter-label">Nama</label>
+                    <input type="text" id="profileName" class="search-box" placeholder="Masukkan nama...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Pilih Avatar</label>
+                    <select id="profileAvatar" class="filter-select">
+                        <option value="👧">Gadis</option>
+                        <option value="👦">Laki-laki</option>
+                        <option value="🐱">Kucing</option>
+                        <option value="🐶">Anjing</option>
+                    </select>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="createProfile()">Simpan</button>
+                    <button class="btn" onclick="showProfiles()">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parental Dashboard -->
+    <div id="parentalDashboardPage" class="dashboard-page" style="display: none;">
+        <div class="container">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px;">Dashboard Orang Tua</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="parentWords">0</div>
+                    <div class="stat-label">Kata Dikuasai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="parentStories">0</div>
+                    <div class="stat-label">Cerita Selesai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="parentTime">0</div>
+                    <div class="stat-label">Menit Total</div>
+                </div>
+            </div>
+            <div class="game-container">
+                <h3>Atur Tujuan Harian</h3>
+                <div class="filter-group">
+                    <label class="filter-label">Menit Membaca</label>
+                    <input type="number" id="dailyReadingGoal" class="search-box" value="30">
+                </div>
+                <button class="btn" onclick="saveParentalSettings()">Simpan Pengaturan</button>
+                <button class="btn" onclick="exportProgress()">Ekspor Progres</button>
+            </div>
+            <button class="btn" onclick="showHome()" style="margin-top: 20px;">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="home-page" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <div class="profile">
+                    <div class="avatar" id="userAvatar">👧</div>
+                    <div>
+                        <div class="level-info" id="userInfo">
+                            <strong>Sari</strong> - Penjelajah Level 2
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="levelProgress"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn" onclick="toggleBackgroundMusic()">🎵 Musik</button>
+                    <button class="btn" onclick="showDashboard()">Dashboard</button>
+                </div>
+            </div>
+
+            <div class="carousel">
+                <h2 class="carousel-title">🌟 Cerita Terbaru</h2>
+                <div class="story-cards" id="recentStories"></div>
+            </div>
+
+            <div class="carousel">
+                <h2 class="carousel-title">❤️ Favorit Anda</h2>
+                <div class="story-cards" id="favoriteStories"></div>
+            </div>
+
+            <div class="categories">
+                <div class="category-card" onclick="showLibrary('hewan')">
+                    <div class="category-icon">🐾</div>
+                    <h3>Hewan</h3>
+                    <p>12 cerita</p>
+                </div>
+                <div class="category-card" onclick="showLibrary('petualangan')">
+                    <div class="category-icon">⛰️</div>
+                    <h3>Petualangan</h3>
+                    <p>8 cerita</p>
+                </div>
+                <div class="category-card" onclick="showLibrary('persahabatan')">
+                    <div class="category-icon">🤝</div>
+                    <h3>Persahabatan</h3>
+                    <p>15 cerita</p>
+                </div>
+                <div class="category-card" onclick="showLibrary('eksplorasi')">
+                    <div class="category-icon">🔍</div>
+                    <h3>Eksplorasi</h3>
+                    <p>10 cerita</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn" onclick="continueReading()">📖 Lanjutkan Cerita</button>
+                <button class="btn" onclick="showLibrary()">📚 Perpustakaan</button>
+                <button class="btn" onclick="showRandomStory()">🎲 Cerita Acak</button>
+            </div>
+
+            <div class="game-container">
+                <h3>Tujuan Harian</h3>
+                <p id="dailyGoalStatus">Baca 30 menit hari ini: <span>0/30 menit</span></p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="dailyGoalProgress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Library -->
+    <div id="libraryPage" class="library-page" style="display: none;">
+        <div class="container">
+            <div class="filters">
+                <h2>📚 Perpustakaan Cerita</h2>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Rentang Usia</label>
+                        <select class="filter-select" id="ageFilter">
+                            <option>Semua Usia</option>
+                            <option>4-5 tahun</option>
+                            <option>5-6 tahun</option>
+                            <option>6-7 tahun</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Tema</label>
+                        <select class="filter-select" id="themeFilter">
+                            <option>Semua Tema</option>
+                            <option>Hewan</option>
+                            <option>Petualangan</option>
+                            <option>Persahabatan</option>
+                            <option>Eksplorasi</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Level Kosakata</label>
+                        <select class="filter-select" id="levelFilter">
+                            <option>Semua Level</option>
+                            <option>Pemula</option>
+                            <option>Menengah</option>
+                            <option>Lanjutan</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="text" class="search-box" id="searchBox" placeholder="Cari cerita..." oninput="searchStories()">
+                <div id="searchSuggestions" style="background: white; border-radius: 8px; padding: 10px; margin-top: 10px; display: none;"></div>
+            </div>
+
+            <div class="story-cards" id="storyGrid"></div>
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn" id="loadMoreStories" onclick="loadMoreStories()">Muat Lebih Banyak</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Reader -->
+    <div id="readerPage" class="reader-page" style="display: none;">
+        <div class="container">
+            <div class="reader-header">
+                <button class="btn" onclick="goBack()">← Kembali</button>
+                <h2 id="storyTitle">Petualangan di Hutan</h2>
+                <div>
+                    <button class="btn" onclick="toggleFavorite()">❤️ Favorit</button>
+                    <button class="btn" onclick="toggleRecordMode()">🎤 Mode Rekam</button>
+                    <button class="btn" onclick="showActivities()">🎮 Aktivitas</button>
+                    <button class="btn" onclick="showSettingsModal()">⚙️ Pengaturan</button>
+                </div>
+            </div>
+
+            <div class="reader-content">
+                <div class="text-panel">
+                    <div class="story-text" id="storyText" role="region" aria-label="Teks cerita"></div>
+                    <div id="storyChoices" style="margin: 20px 0;"></div>
+                    <div class="audio-controls">
+                        <button class="btn" onclick="adjustNarrationSpeed(-0.1)">−</button>
+                        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶️</button>
+                        <button class="btn" onclick="adjustNarrationSpeed(0.1)">+</button>
+                        <div class="audio-progress">
+                            <div class="audio-progress-fill" id="audioProgress"></div>
+                        </div>
+                        <span id="audioTime">0:00 / 2:30</span>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="addNote()">✍️ Tambah Catatan</button>
+                        <button class="btn" onclick="startVocabularyQuiz()">❓ Kuis Kosakata</button>
+                    </div>
+                </div>
+
+                <div class="illustration-panel">
+                    <div class="illustration" id="mainIllustration">🌳</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Page -->
+    <div id="activityPage" class="activity-page" style="display: none;">
+        <div class="container">
+            <div class="game-container">
+                <h2 class="game-title" id="gameTitle">🎯 Susun Kalimat</h2>
+                <p id="gameInstruction">Seret kata-kata ke tempat yang tepat!</p>
+                <div class="filter-row" style="margin-bottom: 20px;">
+                    <div class="filter-group">
+                        <label class="filter-label">Level</label>
+                        <select id="gameDifficulty" class="filter-select" onchange="changeGameDifficulty()">
+                            <option value="easy">Mudah</option>
+                            <option value="medium">Sedang</option>
+                            <option value="hard">Sulit</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Mode</label>
+                        <select id="gameMode" class="filter-select" onchange="changeGameMode()">
+                            <option value="sentence">Susun Kalimat</option>
+                            <option value="matching">Cocokkan Gambar</option>
+                            <option value="memory">Memori</option>
+                            <option value="spelling">Ejaan</option>
+                            <option value="sequencing">Urutan Cerita</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="game-progress">
+                    <div class="game-progress-fill" id="gameProgress"></div>
+                </div>
+                <div id="timerDisplay" style="font-size: 24px; color: #333; margin: 10px 0;">00:00</div>
+                <div class="drag-drop-area" id="dropZone">
+                    <p style="color: #999;">Seret kata-kata ke sini</p>
+                </div>
+                <div class="word-pieces" id="wordPieces"></div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="checkAnswer()">Periksa Jawaban</button>
+                    <button class="btn" onclick="startTimedChallenge()">⏱️ Tantangan Waktu</button>
+                    <button class="btn" onclick="startMultiplayer()">👥 Mode Dua Pemain</button>
+                    <button class="btn" onclick="nextGame()">Permainan Berikutnya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardPage" class="dashboard-page" style="display: none;">
+        <div class="container">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px;">📊 Dashboard Progres</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="wordsLearned">156</div>
+                    <div class="stat-label">Kata Dikuasai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="storiesCompleted">23</div>
+                    <div class="stat-label">Cerita Selesai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="minutesToday">45</div>
+                    <div class="stat-label">Menit Hari Ini</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="userLevel">Level 2</div>
+                    <div class="stat-label">Penjelajah</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="storyCoins">100</div>
+                    <div class="stat-label">Koin Cerita</div>
+                </div>
+            </div>
+            <div class="game-container">
+                <h3>Statistik Detail</h3>
+                <p>Rata-rata Kecepatan Membaca: <span id="readingSpeed">60 kata/menit</span></p>
+                <p>Tingkat Pemahaman: <span id="comprehension">85%</span></p>
+                <canvas id="progressChart" style="max-width: 100%; margin-top: 20px;"></canvas>
+                <button class="btn" onclick="showProgressChart()">📈 Lihat Grafik</button>
+            </div>
+            <div class="badge-collection">
+                <h3>🏆 Koleksi Lencana</h3>
+                <div class="badges-grid" id="badgeGrid"></div>
+            </div>
+            <div class="game-container" style="margin-top: 20px;">
+                <h3>🏅 Papan Peringkat</h3>
+                <div id="leaderboard"></div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="shareAchievement()">📤 Bagikan Pencapaian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recording Mode -->
+    <div id="recordMode" class="record-mode" style="display: none;">
+        <div class="container">
+            <div class="game-container">
+                <h2 class="game-title">🎤 Mode Rekam & Ulangi</h2>
+                <p>Bacakan kalimat berikut dengan jelas:</p>
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <p style="font-size: 24px; color: #333; text-align: center;" id="recordSentence">
+                        "Kiki berjalan ke hutan yang hijau"
+                    </p>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Efek Suara</label>
+                    <select id="voiceEffect" class="filter-select">
+                        <option value="normal">Normal</option>
+                        <option value="robot">Robot</option>
+                        <option value="echo">Echo</option>
+                    </select>
+                </div>
+                <div class="mic-container">
+                    <button class="mic-btn" id="micBtn" onclick="toggleRecording()">🎤</button>
+                    <p id="recordStatus">Tekan untuk mulai merekam</p>
+                </div>
+                <div class="recording-wave" id="recordingWave" style="display: none;">
+                    <div class="wave-bar" style="animation-delay: 0s; height: 20px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.1s; height: 30px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.2s; height: 25px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.3s; height: 35px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.4s; height: 20px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.5s; height: 40px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.6s; height: 30px;"></div>
+                    <div class="wave-bar" style="animation-delay: 0.7s; height: 25px;"></div>
+                </div>
+                <div class="score-display" id="scoreDisplay" style="display: none;"></div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="playRecording()" style="display: none;" id="playbackBtn">▶️ Putar Rekaman</button>
+                    <button class="btn" onclick="compareWithNarrator()">🔄 Bandingkan dengan Narator</button>
+                    <button class="btn" onclick="nextSentence()">➡️ Kalimat Berikutnya</button>
+                </div>
+                <div class="game-container" style="margin-top: 20px;">
+                    <h3>Umpan Balik Pengucapan</h3>
+                    <p id="pronunciationFeedback">Belum ada rekaman.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Creation -->
+    <div id="storyCreationPage" class="home-page" style="display: none;">
+        <div class="container">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px;">Buat Cerita Anda</h2>
+            <div class="game-container">
+                <div class="filter-group">
+                    <label class="filter-label">Judul Cerita</label>
+                    <input type="text" id="storyTitleInput" class="search-box" placeholder="Masukkan judul...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Isi Cerita</label>
+                    <textarea id="storyContentInput" class="search-box" style="height: 150px;" placeholder="Tulis cerita Anda..."></textarea>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Ilustrasi</label>
+                    <select id="storyIllustration" class="filter-select">
+                        <option value="🌳">Hutan</option>
+                        <option value="🏠">Rumah</option>
+                        <option value="🌊">Laut</option>
+                    </select>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="saveStory()">Simpan Cerita</button>
+                    <button class="btn" onclick="showHome()">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="showHome()">
+            <div class="nav-icon">🏠</div>
+            <div>Beranda</div>
+        </button>
+        <button class="nav-btn" onclick="showLibrary()">
+            <div class="nav-icon">📚</div>
+            <div>Perpustakaan</div>
+        </button>
+        <button class="nav-btn" onclick="continueReading()">
+            <div class="nav-icon">📖</div>
+            <div>Baca</div>
+        </button>
+        <button class="nav-btn" onclick="showActivities()">
+            <div class="nav-icon">🎮</div>
+            <div>Aktivitas</div>
+        </button>
+        <button class="nav-btn" onclick="showDashboard()">
+            <div class="nav-icon">📊</div>
+            <div>Progres</div>
+        </button>
+        <button class="nav-btn" onclick="showStoryCreation()">
+            <div class="nav-icon">✍️</div>
+            <div>Buat</div>
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="definitionModal">
+        <div class="modal-content">
+            <h3 id="wordTitle">Kata</h3>
+            <div id="wordDefinition">Definisi kata</div>
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="playWordAudio()">🔊 Dengar</button>
+            </div>
+            <button class="btn" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+
+    <div class="modal" id="gameFeedbackModal">
+        <div class="modal-content">
+            <h3 id="feedbackTitle">Hasil</h3>
+            <div id="feedbackMessage"></div>
+            <button class="btn" onclick="closeFeedbackModal()">Tutup</button>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>Pengaturan</h3>
+            <div class="filter-group">
+                <label class="filter-label">Ukuran Teks</label>
+                <select id="fontSize" class="filter-select" onchange="adjustFontSize()">
+                    <option value="16">Kecil</option>
+                    <option value="20" selected>Normal</option>
+                    <option value="24">Besar</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Bahasa</label>
+                <select id="language" class="filter-select" onchange="changeLanguage()">
+                    <option value="id">Indonesia</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="toggleHighContrast()">🌗 Kontras Tinggi</button>
+            </div>
+            <button class="btn" onclick="closeSettingsModal()">Tutup</button>
+        </div>
+    </div>
+
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <h3>Tambah Catatan</h3>
+            <textarea id="noteInput" class="search-box" style="height: 100px;" placeholder="Tulis catatan Anda..."></textarea>
+            <button class="btn" onclick="saveNote()">Simpan</button>
+            <button class="btn" onclick="closeNoteModal()">Batal</button>
+        </div>
+    </div>
+
+    <div class="modal" id="quizModal">
+        <div class="modal-content">
+            <h3>Kuis Kosakata</h3>
+            <p id="quizQuestion"></p>
+            <div id="quizOptions" style="margin: 20px 0;"></div>
+            <button class="btn" onclick="checkQuizAnswer()">Periksa</button>
+            <button class="btn" onclick="closeQuizModal()">Tutup</button>
+        </div>
+    </div>
+
+    <div class="modal" id="tutorialModal">
+        <div class="modal-content">
+            <h3>Tutorial</h3>
+            <p id="tutorialText">Selamat datang! Klik 'Mulai Petualangan' untuk memulai.</p>
+            <button class="btn" onclick="nextTutorialStep()">Lanjut</button>
+            <button class="btn" onclick="closeTutorial()">Lewati</button>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Notification -->
+    <div id="notification" style="position: fixed; top: 20px; right: 20px; background: #8BC34A; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 1000;"></div>
+
+    <!-- Audio Elements -->
+    <audio id="clickSound" src="click.mp3"></audio>
+    <audio id="successSound" src="success.mp3"></audio>
 
     <script>
-        // Global variables
-        let currentSection = 'story';
-        let gameScore = 0;
-        let totalQuestions = 4;
-        let gameWords = ['kucing', 'anjing', 'taman', 'bermain'];
-        let currentWordIndex = 0;
-        let isRecording = false;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let progressData = {
-            wordsLearned: 12,
-            storiesCompleted: 3,
-            gamesPlayed: 8,
-            accuracyRate: 85
+        // Global state
+        const state = {
+            currentPage: 'splash',
+            isPlaying: false,
+            isRecording: false,
+            audioProgress: 0,
+            gameProgress: 0,
+            currentStory: null,
+            currentGameType: 'sentence',
+            narrationSpeed: 1,
+            isHighContrast: false,
+            isMusicPlaying: false,
+            currentUser: null,
+            users: [],
+            tutorialStep: 0,
+            dailyGoal: { reading: 30, progress: 0 },
+            storyCoins: 100,
+            notes: [],
+            favorites: [],
+            customStories: [],
+            leaderboard: [],
+            timerInterval: null,
+            currentLanguage: 'id'
         };
 
-        // Section Navigation
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.story-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remove active class from all nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionName + '-section').classList.add('active');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            currentSection = sectionName;
+        // Story data
+        const stories = {
+            'petualangan-hutan': {
+                id: 'petualangan-hutan',
+                title: 'Petualangan di Hutan',
+                content: [
+                    {
+                        text: 'Pada suatu hari yang <span class="word-highlight" onclick="showDefinition(\'cerah\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'cerah\')" role="button" tabindex="0" aria-label="Lihat definisi cerah">cerah</span>, Kiki berjalan ke <span class="word-highlight" onclick="showDefinition(\'hutan\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'hutan\')" role="button" tabindex="0" aria-label="Lihat definisi hutan">hutan</span>.',
+                        choices: [
+                            { text: 'Ikuti kupu-kupu', next: 1 },
+                            { text: 'Cari sungai', next: 2 }
+                        ]
+                    },
+                    {
+                        text: 'Dia melihat <span class="word-highlight" onclick="showDefinition(\'kupu-kupu\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'kupu-kupu\')" role="button" tabindex="0" aria-label="Lihat definisi kupu-kupu">kupu-kupu</span> yang cantik terbang di antara <span class="word-highlight" onclick="showDefinition(\'bunga\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'bunga\')" role="button" tabindex="0" aria-label="Lihat definisi bunga">bunga</span>-bunga.',
+                        choices: []
+                    },
+                    {
+                        text: 'Kiki menemukan sungai yang jernih dengan ikan-ikan kecil.',
+                        choices: []
+                    }
+                ],
+                illustration: '🌳',
+                words: ['cerah', 'hutan', 'kupu-kupu', 'bunga'],
+                hotspots: [
+                    { emoji: '🦋', word: 'kupu-kupu', position: { top: '30%', left: '20%' } },
+                    { emoji: '🌸', word: 'bunga', position: { top: '60%', left: '70%' } }
+                ],
+                category: 'petualangan',
+                age: '5-6 tahun',
+                level: 'Pemula'
+            },
+            'rumah-kecil': {
+                id: 'rumah-kecil',
+                title: 'Rumah Kecil',
+                content: [
+                    {
+                        text: 'Di sebuah desa yang tenang, terdapat rumah kecil berwarna kuning.',
+                        choices: []
+                    }
+                ],
+                illustration: '🏠',
+                words: ['desa', 'rumah', 'kuning', 'keluarga'],
+                hotspots: [],
+                category: 'persahabatan',
+                age: '4-5 tahun',
+                level: 'Pemula'
+            },
+            'laut-biru': {
+                id: 'laut-biru',
+                title: 'Laut Biru',
+                content: [
+                    {
+                        text: 'Ikan-ikan berenang di laut biru.',
+                        choices: []
+                    }
+                ],
+                illustration: '🌊',
+                words: ['laut', 'berenang', 'badut', 'bintang'],
+                hotspots: [],
+                category: 'eksplorasi',
+                age: '6-7 tahun',
+                level: 'Menengah'
+            }
+        };
+
+        // Word definitions
+        const definitions = {
+            'cerah': {
+                definition: 'Terang dan tidak mendung, seperti hari yang penuh sinar matahari',
+                example: 'Hari ini cuaca sangat cerah'
+            },
+            'hutan': {
+                definition: 'Tempat yang dipenuhi dengan banyak pohon dan tanaman',
+                example: 'Banyak binatang hidup di hutan'
+            },
+            'kupu-kupu': {
+                definition: 'Serangga cantik yang memiliki sayap berwarna-warni',
+                example: 'Kupu-kupu suka hinggap di bunga'
+            },
+            'bunga': {
+                definition: 'Bagian tanaman yang berwarna indah dan harum',
+                example: 'Bunga mawar sangat harum'
+            }
+        };
+
+        // Language translations
+        const translations = {
+            id: {
+                startAdventure: 'Mulai Petualangan',
+                selectProfile: 'Pilih Profil',
+                home: 'Beranda',
+                library: 'Perpustakaan',
+                read: 'Baca',
+                activities: 'Aktivitas',
+                progress: 'Progres',
+                createStory: 'Buat',
+                correct: 'Hebat! Kalimat Anda benar! 🎉',
+                incorrect: 'Coba Lagi! Susun kata-kata dengan urutan yang tepat.',
+                dashboard: 'Dashboard',
+                createProfile: 'Buat Profil Baru',
+                save: 'Simpan',
+                cancel: 'Batal',
+                parentalDashboard: 'Dashboard Orang Tua',
+                continueReading: 'Lanjutkan Cerita',
+                libraryTitle: 'Perpustakaan Cerita',
+                favorite: 'Favorit',
+                recordMode: 'Mode Rekam',
+                activitiesTitle: 'Aktivitas',
+                settings: 'Pengaturan',
+                addNote: 'Tambah Catatan',
+                vocabQuiz: 'Kuis Kosakata',
+                saveStory: 'Simpan Cerita',
+                createStoryTitle: 'Buat Cerita Anda',
+                feedbackClose: 'Tutup',
+                settingsTitle: 'Pengaturan',
+                fontSize: 'Ukuran Teks',
+                language: 'Bahasa',
+                highContrast: 'Kontras Tinggi',
+                noteTitle: 'Tambah Catatan',
+                quizTitle: 'Kuis Kosakata',
+                checkAnswer: 'Periksa',
+                tutorialTitle: 'Tutorial',
+                next: 'Lanjut',
+                skip: 'Lewati'
+            },
+            en: {
+                startAdventure: 'Start Adventure',
+                selectProfile: 'Select Profile',
+                home: 'Home',
+                library: 'Library',
+                read: 'Read',
+                activities: 'Activities',
+                progress: 'Progress',
+                createStory: 'Create',
+                correct: 'Great job! Your sentence is correct! 🎉',
+                incorrect: 'Try again! Arrange the words in the correct order.',
+                dashboard: 'Dashboard',
+                createProfile: 'Create New Profile',
+                save: 'Save',
+                cancel: 'Cancel',
+                parentalDashboard: 'Parental Dashboard',
+                continueReading: 'Continue Reading',
+                libraryTitle: 'Story Library',
+                favorite: 'Favorite',
+                recordMode: 'Record Mode',
+                activitiesTitle: 'Activities',
+                settings: 'Settings',
+                addNote: 'Add Note',
+                vocabQuiz: 'Vocabulary Quiz',
+                saveStory: 'Save Story',
+                createStoryTitle: 'Create Your Story',
+                feedbackClose: 'Close',
+                settingsTitle: 'Settings',
+                fontSize: 'Text Size',
+                language: 'Language',
+                highContrast: 'High Contrast',
+                noteTitle: 'Add Note',
+                quizTitle: 'Vocabulary Quiz',
+                checkAnswer: 'Check',
+                tutorialTitle: 'Tutorial',
+                next: 'Next',
+                skip: 'Skip'
+            }
+        };
+
+        // Game configurations
+        const gameConfigs = {
+            sentence: {
+                easy: { words: ['Kiki', 'berjalan', 'ke', 'hutan'], correct: ['Kiki', 'berjalan', 'ke', 'hutan'] },
+                medium: { words: ['Kiki', 'melihat', 'kupu-kupu', 'cantik'], correct: ['Kiki', 'melihat', 'kupu-kupu', 'cantik'] },
+                hard: { words: ['Kiki', 'berjalan', 'ke', 'hutan', 'yang', 'hijau'], correct: ['Kiki', 'berjalan', 'ke', 'hutan', 'yang', 'hijau'] }
+            },
+            matching: {
+                easy: [{ image: '🐱', word: 'kucing' }, { image: '🐶', word: 'anjing' }],
+                medium: [{ image: '🐱', word: 'kucing' }, { image: '🐶', word: 'anjing' }, { image: '🌸', word: 'bunga' }],
+                hard: [{ image: '🐱', word: 'kucing' }, { image: '🐶', word: 'anjing' }, { image: '🌸', word: 'bunga' }, { image: '🌳', word: 'pohon' }]
+            },
+            memory: {
+                easy: [{ image: '🐱', word: 'kucing' }, { image: '🐶', word: 'anjing' }]
+            },
+            spelling: {
+                easy: { letters: ['K', 'I', 'K', 'I'], correct: ['K', 'I', 'K', 'I'] },
+                medium: { letters: ['B', 'U', 'N', 'G', 'A'], correct: ['B', 'U', 'N', 'G', 'A'] },
+                hard: { letters: ['K', 'U', 'P', 'U', 'K', 'U', 'P', 'U'], correct: ['K', 'U', 'P', 'U', 'K', 'U', 'P', 'U'] }
+            },
+            sequencing: {
+                easy: { events: ['Kiki berjalan', 'Melihat kupu-kupu', 'Menemukan sungai'], correct: ['Kiki berjalan', 'Melihat kupu-kupu', 'Menemukan sungai'] }
+            }
+        };
+
+        // Initialize app
+        function init() {
+            loadInitialData();
+            populateStoryLibrary();
+            setupDragAndDrop();
+            startProgressAnimation();
+            loadProfiles();
+            updateLeaderboard();
+            checkDailyGoals();
+            showNotification('Selamat datang kembali!');
+            updateLanguage();
         }
 
-        // Story Audio Functions
-        function playStoryAudio() {
-            const storyText = document.getElementById('story-text').textContent;
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(storyText);
-                utterance.lang = 'id-ID';
-                utterance.rate = 0.8;
-                utterance.pitch = 1.2;
-                speechSynthesis.speak(utterance);
+        // Data Management
+        function loadInitialData() {
+            try {
+                state.users = JSON.parse(localStorage.getItem('users')) || [];
+                state.customStories = JSON.parse(localStorage.getItem('customStories')) || [];
+                state.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            } catch (e) {
+                console.error('Failed to load from localStorage:', e);
+                showFeedbackModal('Error', 'Gagal memuat data. Silakan coba lagi.');
+            }
+        }
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem('users', JSON.stringify(state.users));
+                localStorage.setItem('customStories', JSON.stringify(state.customStories));
+                localStorage.setItem('leaderboard', JSON.stringify(state.leaderboard));
+            } catch (e) {
+                console.error('Failed to save to localStorage:', e);
+                showFeedbackModal('Error', 'Gagal menyimpan data. Silakan coba lagi.');
+            }
+        }
+
+        // Sanitization to prevent XSS
+        function sanitize(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        // User Management
+        function showProfiles() {
+            hideAllPages();
+            document.getElementById('profilesPage').style.display = 'block';
+            state.currentPage = 'profiles';
+            loadProfiles();
+        }
+
+        function loadProfiles() {
+            const profileGrid = document.getElementById('profileGrid');
+            profileGrid.innerHTML = '';
+            state.users.forEach((user, index) => {
+                const card = document.createElement('div');
+                card.className = 'story-card';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Pilih profil ${user.name}`);
+                card.addEventListener('click', () => selectProfile(index));
+                card.addEventListener('keypress', (e) => e.key === 'Enter' && selectProfile(index));
+                card.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(user.avatar)}</div>
+                    <h3>${sanitize(user.name)}</h3>
+                    <p>Level ${user.level}</p>
+                `;
+                profileGrid.appendChild(card);
+            });
+        }
+
+        function showCreateProfile() {
+            hideAllPages();
+            document.getElementById('createProfilePage').style.display = 'block';
+            state.currentPage = 'createProfile';
+        }
+
+        function createProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            const avatar = document.getElementById('profileAvatar').value;
+            if (!name) {
+                showFeedbackModal('Peringatan', 'Masukkan nama profil!');
+                return;
+            }
+            if (name.length > 50) {
+                showFeedbackModal('Peringatan', 'Nama terlalu panjang!');
+                return;
+            }
+            const newUser = {
+                id: state.users.length,
+                name: sanitize(name),
+                avatar,
+                level: 1,
+                wordsLearned: 0,
+                storiesCompleted: 0,
+                minutesToday: 0,
+                storyCoins: 100,
+                favorites: [],
+                notes: [],
+                badges: []
+            };
+            state.users.push(newUser);
+            saveToStorage();
+            selectProfile(state.users.length - 1);
+            showHome();
+        }
+
+        function selectProfile(index) {
+            state.currentUser = state.users[index];
+            state.favorites = state.currentUser.favorites || [];
+            state.notes = state.currentUser.notes || [];
+            state.storyCoins = state.currentUser.storyCoins || 100;
+            updateHomePage();
+            showHome();
+        }
+
+        function showParentalDashboard() {
+            if (!state.currentUser) {
+                showFeedbackModal('Peringatan', 'Pilih profil terlebih dahulu!');
+                return;
+            }
+            hideAllPages();
+            document.getElementById('parentalDashboardPage').style.display = 'block';
+            state.currentPage = 'parental';
+            updateParentalDashboard();
+        }
+
+        function updateParentalDashboard() {
+            if (state.currentUser) {
+                document.getElementById('parentWords').textContent = state.currentUser.wordsLearned || 0;
+                document.getElementById('parentStories').textContent = state.currentUser.storiesCompleted || 0;
+                document.getElementById('parentTime').textContent = state.currentUser.minutesToday || 0;
+                document.getElementById('dailyReadingGoal').value = state.dailyGoal.reading;
+            }
+        }
+
+        function saveParentalSettings() {
+            const goal = parseInt(document.getElementById('dailyReadingGoal').value) || 30;
+            if (goal < 0) {
+                showFeedbackModal('Peringatan', 'Tujuan membaca tidak valid!');
+                return;
+            }
+            state.dailyGoal.reading = goal;
+            showFeedbackModal('Berhasil', 'Pengaturan disimpan!');
+            updateHomePage();
+        }
+
+        function exportProgress() {
+            showFeedbackModal('Ekspor Progres', 'Progres telah diekspor sebagai PDF!');
+        }
+
+        // Navigation
+        function showHome() {
+            if (!state.currentUser) {
+                showProfiles();
+                return;
+            }
+            hideAllPages();
+            document.getElementById('homePage').style.display = 'block';
+            updateNavigation('home');
+            state.currentPage = 'home';
+            updateHomePage();
+        }
+
+        function updateHomePage() {
+            if (state.currentUser) {
+                document.getElementById('userAvatar').textContent = state.currentUser.avatar;
+                document.getElementById('userInfo').innerHTML = `<strong>${sanitize(state.currentUser.name)}</strong> - Penjelajah Level ${state.currentUser.level}`;
+                document.getElementById('levelProgress').style.width = `${(state.currentUser.wordsLearned % 100)}%`;
+            }
+            populateRecentStories();
+            populateFavoriteStories();
+            updateDailyGoalStatus();
+        }
+
+        function showLibrary(category = null) {
+            hideAllPages();
+            document.getElementById('libraryPage').style.display = 'block';
+            updateNavigation('library');
+            state.currentPage = 'library';
+            if (category) {
+                document.getElementById('themeFilter').value = category;
+            }
+            populateStoryLibrary();
+        }
+
+        function showStoryDetail(storyId) {
+            state.currentStory = stories[storyId] || state.customStories.find(s => s.id === storyId);
+            if (state.currentStory) {
+                showReader();
             } else {
-                alert('Browser Anda tidak mendukung text-to-speech');
+                showFeedbackModal('Error', 'Cerita tidak ditemukan!');
             }
         }
 
-        function pauseStoryAudio() {
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
+        function showReader() {
+            hideAllPages();
+            document.getElementById('readerPage').style.display = 'block';
+            updateNavigation('reader');
+            state.currentPage = 'reader';
+            if (state.currentStory) {
+                document.getElementById('storyTitle').textContent = state.currentStory.title;
+                document.getElementById('storyText').innerHTML = highlightWords(state.currentStory.content[0].text, state.currentStory.words);
+                document.getElementById('mainIllustration').textContent = state.currentStory.illustration;
+                setupHotspots();
+                setupStoryChoices();
             }
         }
 
-        // Drag and Drop Functionality
-        function initializeDragAndDrop() {
-            const draggableWords = document.querySelectorAll('.draggable-word');
-            const wordBlanks = document.querySelectorAll('.word-blank');
+        function showActivities() {
+            hideAllPages();
+            document.getElementById('activityPage').style.display = 'block';
+            updateNavigation('activities');
+            state.currentPage = 'activities';
+            resetGame();
+        }
 
-            draggableWords.forEach(word => {
-                word.addEventListener('dragstart', handleDragStart);
-                word.addEventListener('dragend', handleDragEnd);
+        function showDashboard() {
+            if (!state.currentUser) {
+                showFeedbackModal('Peringatan', 'Pilih profil terlebih dahulu!');
+                return;
+            }
+            hideAllPages();
+            document.getElementById('dashboardPage').style.display = 'block';
+            updateNavigation('dashboard');
+            state.currentPage = 'dashboard';
+            updateDashboard();
+        }
+
+        function showStoryCreation() {
+            hideAllPages();
+            document.getElementById('storyCreationPage').style.display = 'block';
+            updateNavigation('create');
+            state.currentPage = 'create';
+        }
+
+        function showRandomStory() {
+            const storyIds = [...Object.keys(stories), ...state.customStories.map(s => s.id)];
+            const randomId = storyIds[Math.floor(Math.random() * storyIds.length)];
+            showStoryDetail(randomId);
+        }
+
+        function continueReading() {
+            playClickSound();
+            showStoryDetail('petualangan-hutan');
+        }
+
+        function toggleRecordMode() {
+            if (!state.currentStory) {
+                showFeedbackModal('Peringatan', 'Pilih cerita terlebih dahulu!');
+                return;
+            }
+            hideAllPages();
+            document.getElementById('recordMode').style.display = 'block';
+            state.currentPage = 'record';
+        }
+
+        function goBack() {
+            playClickSound();
+            if (state.currentPage === 'reader' || state.currentPage === 'record' || state.currentPage === 'create') {
+                showHome();
+            } else if (state.currentPage === 'profiles' || state.currentPage === 'parental') {
+                showHome();
+            } else if (state.currentPage === 'createProfile') {
+                showProfiles();
+            } else {
+                history.back();
+            }
+        }
+
+        function hideAllPages() {
+            const pages = ['splashScreen', 'homePage', 'libraryPage', 'readerPage', 'activityPage', 'dashboardPage', 'recordMode', 'profilesPage', 'createProfilePage', 'parentalDashboardPage', 'storyCreationPage'];
+            pages.forEach(page => {
+                document.getElementById(page).style.display = 'none';
+            });
+            ['definitionModal', 'gameFeedbackModal', 'settingsModal', 'noteModal', 'quizModal', 'tutorialModal'].forEach(modal => {
+                document.getElementById(modal).style.display = 'none';
+            });
+        }
+
+        function updateNavigation(activePage) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const navMap = {
+                'home': 0,
+                'library': 1,
+                'reader': 2,
+                'activities': 3,
+                'dashboard': 4,
+                'create': 5
+            };
+            if (navMap[activePage] !== undefined) {
+                document.querySelectorAll('.nav-btn')[navMap[activePage]].classList.add('active');
+            }
+        }
+
+        // Story Functions
+        function populateStoryLibrary(page = 1) {
+            const storyGrid = document.getElementById('storyGrid');
+            storyGrid.innerHTML = '';
+            const allStories = [...Object.values(stories), ...state.customStories];
+            const ageFilter = document.getElementById('ageFilter').value;
+            const themeFilter = document.getElementById('themeFilter').value;
+            const levelFilter = document.getElementById('levelFilter').value;
+            const searchQuery = document.getElementById('searchBox').value.toLowerCase();
+
+            let filteredStories = allStories.filter(story => {
+                return (ageFilter === 'Semua Usia' || story.age === ageFilter) &&
+                       (themeFilter === 'Semua Tema' || story.category === themeFilter) &&
+                       (levelFilter === 'Semua Level' || story.level === levelFilter) &&
+                       (searchQuery === '' || story.title.toLowerCase().includes(searchQuery));
             });
 
-            wordBlanks.forEach(blank => {
-                blank.addEventListener('dragover', handleDragOver);
-                blank.addEventListener('drop', handleDrop);
+            const start = (page - 1) * 6;
+            const end = start + 6;
+            filteredStories.slice(start, end).forEach(story => {
+                const card = document.createElement('div');
+                card.className = 'story-card';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Buka cerita ${story.title}`);
+                card.addEventListener('click', () => showStoryDetail(story.id));
+                card.addEventListener('keypress', (e) => e.key === 'Enter' && showStoryDetail(story.id));
+                card.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(story.illustration)}</div>
+                    <h3>${sanitize(story.title)}</h3>
+                    <p>${sanitize(story.content[0].text.substring(0, 50))}...</p>
+                    <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
+                    <button class="btn" style="font-size: 16px; padding: 8px;" onclick="event.stopPropagation(); toggleFavorite('${story.id}')" onkeypress="e => e.key === 'Enter' && toggleFavorite('${story.id}')" role="button" aria-label="${state.favorites.includes(story.id) ? 'Hapus dari favorit' : 'Tambah ke favorit'}">${state.favorites.includes(story.id) ? '❤️' : '🤍'} ${translations[state.currentLanguage].favorite}</button>
+                `;
+                storyGrid.appendChild(card);
             });
+
+            document.getElementById('loadMoreStories').style.display = end < filteredStories.length ? 'inline-block' : 'none';
         }
 
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.textContent);
-            e.target.classList.add('dragging');
+        function loadMoreStories() {
+            const currentPage = Math.floor(document.getElementById('storyGrid').children.length / 6) + 1;
+            populateStoryLibrary(currentPage + 1);
         }
 
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
+        function searchStories() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const suggestions = document.getElementById('searchSuggestions');
+            const allStories = [...Object.values(stories), ...state.customStories];
+            const matches = allStories.filter(story => story.title.toLowerCase().includes(query)).slice(0, 5);
+            suggestions.innerHTML = matches.map(story => `
+                <div style="padding: 5px; cursor: pointer;" onclick="showStoryDetail('${story.id}')" onkeypress="e => e.key === 'Enter' && showStoryDetail('${story.id}')" role="button" tabindex="0" aria-label="Buka cerita ${story.title}">${sanitize(story.title)}</div>
+            `).join('');
+            suggestions.style.display = query ? 'block' : 'none';
+            populateStoryLibrary();
         }
 
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const draggedText = e.dataTransfer.getData('text/plain');
-            if (e.target.classList.contains('word-blank')) {
-                e.target.textContent = draggedText;
-                e.target.style.background = 'rgba(85, 239, 196, 0.8)';
+        function toggleFavorite(storyId = state.currentStory?.id) {
+            if (!storyId) return;
+            if (state.favorites.includes(storyId)) {
+                state.favorites = state.favorites.filter(id => id !== storyId);
+            } else {
+                state.favorites.push(storyId);
+            }
+            if (state.currentUser) {
+                state.currentUser.favorites = state.favorites;
+                saveToStorage();
+            }
+            if (state.currentPage === 'library') {
+                populateStoryLibrary();
+            } else if (state.currentPage === 'home') {
+                populateFavoriteStories();
             }
         }
 
-        // Check Answers Function
-        function checkAnswers() {
-            const blanks = document.querySelectorAll('.word-blank');
-            let correctAnswers = 0;
-            
-            blanks.forEach(blank => {
-                const userAnswer = blank.textContent.toLowerCase().trim();
-                const correctAnswer = blank.dataset.answer.toLowerCase();
-                
-                if (userAnswer === correctAnswer) {
-                    blank.style.background = 'rgba(85, 239, 196, 0.8)';
-                    correctAnswers++;
-                } else {
-                    blank.style.background = 'rgba(255, 107, 107, 0.8)';
+        function populateRecentStories() {
+            const recentStories = document.getElementById('recentStories');
+            recentStories.innerHTML = '';
+            const allStories = [...Object.values(stories), ...state.customStories].slice(0, 3);
+            allStories.forEach(story => {
+                const card = document.createElement('div');
+                card.className = 'story-card';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Buka cerita ${story.title}`);
+                card.addEventListener('click', () => showStoryDetail(story.id));
+                card.addEventListener('keypress', (e) => e.key === 'Enter' && showStoryDetail(story.id));
+                card.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(story.illustration)}</div>
+                    <h3>${sanitize(story.title)}</h3>
+                    <p>${sanitize(story.content[0].text.substring(0, 50))}...</p>
+                    <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
+                `;
+                recentStories.appendChild(card);
+            });
+        }
+
+        function populateFavoriteStories() {
+            const favoriteStories = document.getElementById('favoriteStories');
+            favoriteStories.innerHTML = '';
+            const allStories = [...Object.values(stories), ...state.customStories];
+            const favStories = allStories.filter(story => state.favorites.includes(story.id));
+            if (favStories.length === 0) {
+                favoriteStories.innerHTML = '<p style="color: #333;">Belum ada cerita favorit.</p>';
+                return;
+            }
+            favStories.forEach(story => {
+                const card = document.createElement('div');
+                card.className = 'story-card';
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Buka cerita ${story.title}`);
+                card.addEventListener('click', () => showStoryDetail(story.id));
+                card.addEventListener('keypress', (e) => e.key === 'Enter' && showStoryDetail(story.id));
+                card.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(story.illustration)}</div>
+                    <h3>${sanitize(story.title)}</h3>
+                    <p>${sanitize(story.content[0].text.substring(0, 50))}...</p>
+                    <div style="margin-top: 12px;">⭐⭐⭐⭐
+                                            <button class="btn" style="font-size: 16px; padding: 8px;" onclick="event.stopPropagation(); toggleFavorite('${story.id}')" onkeypress="e => e.key === 'Enter' && toggleFavorite('${story.id}')" role="button" aria-label="Hapus dari favorit">❤️ ${translations[state.currentLanguage].favorite}</button>
+                `;
+                favoriteStories.appendChild(card);
+            });
+        }
+
+        function highlightWords(text, words) {
+            let highlightedText = sanitize(text);
+            words.forEach(word => {
+                const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                highlightedText = highlightedText.replace(regex, `<span class="word-highlight" onclick="showDefinition('${word}')" onkeypress="e => e.key === 'Enter' && showDefinition('${word}')" role="button" tabindex="0" aria-label="Lihat definisi ${word}">${word}</span>`);
+            });
+            return highlightedText;
+        }
+
+        function setupHotspots() {
+            const illustrationPanel = document.querySelector('.illustration-panel');
+            illustrationPanel.querySelectorAll('.hotspot').forEach(hotspot => hotspot.remove());
+            if (state.currentStory && state.currentStory.hotspots) {
+                state.currentStory.hotspots.forEach(hotspot => {
+                    const hotspotElement = document.createElement('div');
+                    hotspotElement.className = 'hotspot';
+                    hotspotElement.style.top = hotspot.position.top;
+                    hotspotElement.style.left = hotspot.position.left;
+                    hotspotElement.textContent = hotspot.emoji;
+                    hotspotElement.tabIndex = 0;
+                    hotspotElement.setAttribute('role', 'button');
+                    hotspotElement.setAttribute('aria-label', `Lihat definisi ${hotspot.word}`);
+                    hotspotElement.addEventListener('click', () => showDefinition(hotspot.word));
+                    hotspotElement.addEventListener('keypress', (e) => e.key === 'Enter' && showDefinition(hotspot.word));
+                    illustrationPanel.appendChild(hotspotElement);
+                });
+            }
+        }
+
+        function setupStoryChoices() {
+            const choicesContainer = document.getElementById('storyChoices');
+            choicesContainer.innerHTML = '';
+            if (state.currentStory && state.currentStory.content[0].choices) {
+                state.currentStory.content[0].choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'btn';
+                    button.textContent = sanitize(choice.text);
+                    button.setAttribute('role', 'button');
+                    button.setAttribute('aria-label', `Pilih ${choice.text}`);
+                    button.addEventListener('click', () => selectStoryChoice(choice.next));
+                    button.addEventListener('keypress', (e) => e.key === 'Enter' && selectStoryChoice(choice.next));
+                    choicesContainer.appendChild(button);
+                });
+            }
+        }
+
+        function selectStoryChoice(nextIndex) {
+            if (state.currentStory && state.currentStory.content[nextIndex]) {
+                document.getElementById('storyText').innerHTML = highlightWords(state.currentStory.content[nextIndex].text, state.currentStory.words);
+                setupStoryChoices();
+                playClickSound();
+            }
+        }
+
+        function saveStory() {
+            const title = document.getElementById('storyTitleInput').value.trim();
+            const content = document.getElementById('storyContentInput').value.trim();
+            const illustration = document.getElementById('storyIllustration').value;
+
+            if (!title || !content) {
+                showFeedbackModal('Peringatan', 'Judul dan isi cerita harus diisi!');
+                return;
+            }
+            if (title.length > 100 || content.length > 5000) {
+                showFeedbackModal('Peringatan', 'Judul atau isi cerita terlalu panjang!');
+                return;
+            }
+
+            const newStory = {
+                id: `custom-${state.customStories.length}-${Date.now()}`,
+                title: sanitize(title),
+                content: [{ text: sanitize(content), choices: [] }],
+                illustration,
+                words: content.split(/\s+/).filter(word => word.length > 3).slice(0, 5),
+                hotspots: [],
+                category: 'custom',
+                age: 'Semua Usia',
+                level: 'Pemula'
+            };
+            state.customStories.push(newStory);
+            saveToStorage();
+            showFeedbackModal('Berhasil', 'Cerita Anda telah disimpan!');
+            showLibrary('custom');
+        }
+
+        // Audio Functions
+        function toggleAudio() {
+            state.isPlaying = !state.isPlaying;
+            const playBtn = document.getElementById('playBtn');
+            playBtn.textContent = state.isPlaying ? '⏸️' : '▶️';
+            if (state.isPlaying) {
+                startAudioProgress();
+            } else {
+                clearInterval(state.audioInterval);
+            }
+            playClickSound();
+        }
+
+        function startAudioProgress() {
+            if (state.audioInterval) clearInterval(state.audioInterval);
+            state.audioProgress = 0;
+            state.audioInterval = setInterval(() => {
+                state.audioProgress += 0.1 * state.narrationSpeed;
+                const progressPercent = (state.audioProgress / 150) * 100;
+                document.getElementById('audioProgress').style.width = `${progressPercent}%`;
+                const minutes = Math.floor(state.audioProgress / 60);
+                const seconds = Math.floor(state.audioProgress % 60);
+                document.getElementById('audioTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')} / 2:30`;
+                if (state.audioProgress >= 150) {
+                    clearInterval(state.audioInterval);
+                    state.isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶️';
+                    if (state.currentUser) {
+                        state.currentUser.minutesToday = (state.currentUser.minutesToday || 0) + 2.5;
+                        saveToStorage();
+                    }
                 }
-            });
-            
-            if (correctAnswers === blanks.length) {
-                showSuccessMessage('Hebat! Semua jawaban benar!');
-                createConfetti();
-                updateProgress('accuracy');
-            } else {
-                showSuccessMessage(`Bagus! ${correctAnswers} dari ${blanks.length} jawaban benar. Coba lagi!`);
-            }
+            }, 100);
         }
 
-        // Mini Game Functions
-        function selectPicture(element, answer) {
-            const currentWord = gameWords[currentWordIndex].toLowerCase();
-            
-            if (answer.toLowerCase() === currentWord) {
-                element.classList.add('matched');
-                gameScore++;
-                document.getElementById('game-score').textContent = gameScore;
-                
-                playCorrectSound();
-                
-                setTimeout(() => {
-                    nextGameWord();
-                }, 1000);
-                
-                if (gameScore === totalQuestions) {
-                    setTimeout(() => {
-                        showSuccessMessage('🎉 Selamat! Anda menyelesaikan semua soal!');
-                        createConfetti();
-                        updateProgress('games');
-                        resetGame();
-                    }, 1500);
-                }
-            } else {
-                element.style.background = 'rgba(255, 107, 107, 0.8)';
-                setTimeout(() => {
-                    element.style.background = 'white';
-                }, 1000);
-            }
+        function adjustNarrationSpeed(change) {
+            state.narrationSpeed = Math.max(0.5, Math.min(2, state.narrationSpeed + change));
+            showNotification(`Kecepatan narasi: ${state.narrationSpeed.toFixed(1)}x`);
+            playClickSound();
         }
 
-        function nextGameWord() {
-            currentWordIndex = (currentWordIndex + 1) % gameWords.length;
-            const wordDisplay = document.getElementById('current-word');
-            wordDisplay.textContent = gameWords[currentWordIndex].toUpperCase();
-            
-            // Reset card colors
-            document.querySelectorAll('.picture-card').forEach(card => {
-                card.classList.remove('matched');
-                card.style.background = 'white';
-            });
-        }
-
+        // Game Functions
         function resetGame() {
-            gameScore = 0;
-            currentWordIndex = 0;
-            document.getElementById('game-score').textContent = '0';
-            document.getElementById('current-word').textContent = gameWords[0].toUpperCase();
-            
-            document.querySelectorAll('.picture-card').forEach(card => {
-                card.classList.remove('matched');
-                card.style.background = 'white';
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                document.getElementById('timerDisplay').style.display = 'none';
+            }
+            state.gameProgress = 0;
+            updateGameProgress(0);
+            const dropZone = document.getElementById('dropZone');
+            const wordPieces = document.getElementById('wordPieces');
+            const difficulty = document.getElementById('gameDifficulty').value;
+
+            document.getElementById('gameTitle').textContent = {
+                sentence: '🎯 Susun Kalimat',
+                matching: '🎯 Cocokkan Gambar',
+                memory: '🎯 Permainan Memori',
+                spelling: '🎯 Ejaan Kata',
+                sequencing: '🎯 Urutan Cerita'
+            }[state.currentGameType];
+
+            document.getElementById('gameInstruction').textContent = {
+                sentence: 'Seret kata-kata ke tempat yang tepat!',
+                matching: 'Cocokkan gambar dengan kata yang tepat!',
+                memory: 'Balik kartu untuk mencocokkan pasangan!',
+                spelling: 'Susun huruf untuk membentuk kata!',
+                sequencing: 'Urutkan peristiwa cerita dengan benar!'
+            }[state.currentGameType];
+
+            dropZone.innerHTML = '';
+            wordPieces.innerHTML = '';
+
+            if (state.currentGameType === 'sentence') {
+                dropZone.innerHTML = '<p style="color: #999;">Seret kata-kata ke sini</p>';
+                wordPieces.innerHTML = gameConfigs.sentence[difficulty].words
+                    .map(word => `<div class="word-piece" draggable="true" role="button" aria-label="Kata ${word}">${sanitize(word)}</div>`).join('');
+            } else if (state.currentGameType === 'matching') {
+                dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
+                const gameGrid = dropZone.querySelector('div');
+                gameConfigs.matching[difficulty].forEach(game => {
+                    const imageCard = document.createElement('div');
+                    imageCard.style.cssText = 'background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; font-size: 48px; border: 2px dashed #ddd;';
+                    imageCard.textContent = game.image;
+                    imageCard.setAttribute('role', 'button');
+                    imageCard.setAttribute('aria-label', `Gambar ${game.word}`);
+                    gameGrid.appendChild(imageCard);
+                    const wordCard = document.createElement('div');
+                    wordCard.className = 'word-piece';
+                    wordCard.textContent = game.word;
+                    wordCard.draggable = true;
+                    wordCard.setAttribute('role', 'button');
+                    wordCard.setAttribute('aria-label', `Kata ${game.word}`);
+                    wordPieces.appendChild(wordCard);
+                });
+            } else if (state.currentGameType === 'memory') {
+                dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
+                const gameGrid = dropZone.querySelector('div');
+                const pairs = [...gameConfigs.memory[difficulty], ...gameConfigs.memory[difficulty]];
+                pairs.sort(() => Math.random() - 0.5);
+                pairs.forEach((pair, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'word-piece';
+                    card.style.cssText = 'background: #FFD54F; padding: 20px; text-align: center; font-size: 24px; border-radius: 8px; cursor: pointer;';
+                    card.dataset.word = pair.word;
+                    card.dataset.index = index;
+                    card.textContent = '❓';
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('aria-label', 'Kartu memori');
+                    card.addEventListener('click', () => flipCard(card));
+                    card.addEventListener('keypress', (e) => e.key === 'Enter' && flipCard(card));
+                    gameGrid.appendChild(card);
+                });
+            } else if (state.currentGameType === 'spelling') {
+                dropZone.innerHTML = '<p style="color: #999;">Seret huruf ke sini</p>';
+                wordPieces.innerHTML = gameConfigs.spelling[difficulty].letters
+                    .map(letter => `<div class="word-piece" draggable="true" role="button" aria-label="Huruf ${letter}">${sanitize(letter)}</div>`).join('');
+            } else if (state.currentGameType === 'sequencing') {
+                dropZone.innerHTML = '<p style="color: #999;">Seret peristiwa ke sini</p>';
+                wordPieces.innerHTML = gameConfigs.sequencing[difficulty].events
+                    .map(event => `<div class="word-piece" draggable="true" role="button" aria-label="Peristiwa ${event}">${sanitize(event)}</div>`).join('');
+            }
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const wordPieces = document.querySelectorAll('.word-piece');
+            const dropZone = document.getElementById('dropZone');
+
+            wordPieces.forEach(piece => {
+                piece.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', piece.textContent);
+                    piece.classList.add('dragging');
+                });
+                piece.addEventListener('dragend', () => {
+                    piece.classList.remove('dragging');
+                });
+            });
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('text/plain');
+                const piece = Array.from(wordPieces).find(p => p.textContent === data);
+                if (piece) {
+                    if (state.currentGameType === 'sentence' || state.currentGameType === 'spelling' || state.currentGameType === 'sequencing') {
+                        dropZone.appendChild(piece);
+                        dropZone.querySelector('p')?.remove();
+                    }
+                }
             });
         }
 
-        // Listen & Repeat Functions
-        function playPracticeWord() {
-            const word = document.getElementById('practice-word').textContent;
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'id-ID';
-                utterance.rate = 0.7;
-                utterance.pitch = 1.3;
-                speechSynthesis.speak(utterance);
+        function flipCard(card) {
+            if (card.textContent !== '❓') return;
+            const word = card.dataset.word;
+            card.textContent = word;
+            const flippedCards = document.querySelectorAll('.word-piece').filter(c => c.textContent !== '❓');
+            if (flippedCards.length === 2) {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.word === card2.dataset.word && card1.dataset.index !== card2.dataset.index) {
+                    setTimeout(() => {
+                        card1.style.visibility = 'hidden';
+                        card2.style.visibility = 'hidden';
+                        state.gameProgress += 25;
+                        updateGameProgress(state.gameProgress);
+                        playSuccessSound();
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        card1.textContent = '❓';
+                        card2.textContent = '❓';
+                    }, 1000);
+                }
             }
         }
 
-        async function toggleRecording() {
-            const recordBtn = document.getElementById('record-btn');
-            
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    recordedChunks = [];
-                    
-                    mediaRecorder.addEventListener('dataavailable', event => {
-                        if (event.data.size > 0) {
-                            recordedChunks.push(event.data);
-                        }
-                    });
-                    
-                    mediaRecorder.addEventListener('stop', () => {
-                        const blob = new Blob(recordedChunks, { type: 'audio/wav' });
-                        const audioUrl = URL.createObjectURL(blob);
-                        
-                        const playButton = document.getElementById('play-recording');
-                        playButton.style.display = 'inline-block';
-                        playButton.onclick = () => {
-                            const audio = new Audio(audioUrl);
-                            audio.play();
-                        };
-                    });
-                    
-                    mediaRecorder.start();
-                    isRecording = true;
-                    recordBtn.classList.add('recording');
-                    recordBtn.innerHTML = '⏹️';
-                    
-                } catch (error) {
-                    console.error('Error accessing microphone:', error);
-                    alert('Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses mikrofon.');
+        function checkAnswer() {
+            const dropZone = document.getElementById('dropZone');
+            const difficulty = document.getElementById('gameDifficulty').value;
+            const config = gameConfigs[state.currentGameType][difficulty];
+
+            if (state.currentGameType === 'sentence' || state.currentGameType === 'spelling' || state.currentGameType === 'sequencing') {
+                const userAnswer = Array.from(dropZone.children).map(child => child.textContent.trim());
+                const isCorrect = userAnswer.join('') === config.correct.join('');
+                if (isCorrect) {
+                    state.gameProgress = 100;
+                    updateGameProgress(100);
+                    showFeedbackModal('Berhasil', translations[state.currentLanguage].correct);
+                    createConfetti();
+                    playSuccessSound();
+                    if (state.currentUser) {
+                        state.currentUser.wordsLearned = (state.currentUser.wordsLearned || 0) + config.correct.length;
+                        state.currentUser.storyCoins += 10;
+                        saveToStorage();
+                    }
+                } else {
+                    showFeedbackModal('Coba Lagi', translations[state.currentLanguage].incorrect);
                 }
-            } else {
-                mediaRecorder.stop();
-                isRecording = false;
-                recordBtn.classList.remove('recording');
-                recordBtn.innerHTML = '🎤';
-                
-                // Stop all tracks
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                
-                showSuccessMessage('Rekaman selesai! Anda bisa memutar rekaman Anda.');
-                updateProgress('words');
+            } else if (state.currentGameType === 'memory' && state.gameProgress >= 100) {
+                showFeedbackModal('Berhasil', 'Semua pasangan ditemukan! 🎉');
+                createConfetti();
+                playSuccessSound();
             }
+        }
+
+        function updateGameProgress(progress) {
+            state.gameProgress = progress;
+            document.getElementById('gameProgress').style.width = `${progress}%`;
+        }
+
+        function changeGameMode() {
+            state.currentGameType = document.getElementById('gameMode').value;
+            resetGame();
+        }
+
+        function changeGameDifficulty() {
+            resetGame();
+        }
+
+        function startTimedChallenge() {
+            let timeLeft = 30;
+            document.getElementById('timerDisplay').style.display = 'block';
+            document.getElementById('timerDisplay').textContent = `00:${timeLeft.toString().padStart(2, '0')}`;
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').textContent = `00:${timeLeft.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(state.timerInterval);
+                    showFeedbackModal('Waktu Habis', 'Waktu habis! Coba lagi.');
+                    resetGame();
+                }
+            }, 1000);
+            resetGame();
+        }
+
+        function startMultiplayer() {
+            showFeedbackModal('Demo', 'Mode dua pemain sedang dalam pengembangan!');
+        }
+
+        function nextGame() {
+            resetGame();
+            showNotification('Permainan baru dimulai!');
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            if (state.currentUser) {
+                document.getElementById('wordsLearned').textContent = state.currentUser.wordsLearned || 0;
+                document.getElementById('storiesCompleted').textContent = state.currentUser.storiesCompleted || 0;
+                document.getElementById('minutesToday').textContent = state.currentUser.minutesToday || 0;
+                document.getElementById('userLevel').textContent = `Level ${state.currentUser.level}`;
+                document.getElementById('storyCoins').textContent = state.currentUser.storyCoins || 100;
+                updateBadgeCollection();
+                updateLeaderboard();
+            }
+        }
+
+        function showProgressChart() {
+            if (!state.currentUser) {
+                showFeedbackModal('Peringatan', 'Pilih profil terlebih dahulu!');
+                return;
+            }
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            // Destroy existing chart if any
+            if (window.progressChart instanceof Chart) {
+                window.progressChart.destroy();
+            }
+            window.progressChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kata Dikuasai', 'Cerita Selesai', 'Menit Membaca'],
+                    datasets: [{
+                        label: 'Progres',
+                        data: [
+                            state.currentUser.wordsLearned || 0,
+                            state.currentUser.storiesCompleted || 0,
+                            state.currentUser.minutesToday || 0
+                        ],
+                        backgroundColor: ['#8BC34A', '#FFD54F', '#81CFFE'],
+                        borderColor: ['#333', '#333', '#333'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Jumlah'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Kategori'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateBadgeCollection() {
+            const badgeGrid = document.getElementById('badgeGrid');
+            badgeGrid.innerHTML = '';
+            const badges = state.currentUser?.badges || [];
+            if (badges.length === 0) {
+                badgeGrid.innerHTML = '<p style="color: #333;">Belum ada lencana.</p>';
+                return;
+            }
+            badges.forEach(badge => {
+                const badgeElement = document.createElement('div');
+                badgeElement.className = 'badge';
+                badgeElement.innerHTML = `
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div>${sanitize(badge.name)}</div>
+                `;
+                badgeGrid.appendChild(badgeElement);
+            });
+        }
+
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            leaderboard.innerHTML = '';
+            state.leaderboard.sort((a, b) => (b.wordsLearned || 0) - (a.wordsLearned || 0)).slice(0, 5).forEach((entry, index) => {
+                const entryElement = document.createElement('div');
+                entryElement.style.cssText = 'background: #f9f9f9; padding: 10px; margin: 5px 0; border-radius: 8px;';
+                entryElement.innerHTML = `
+                    <span style="font-weight: bold;">#${index + 1}</span> ${sanitize(entry.name)} - ${entry.wordsLearned || 0} kata
+                `;
+                leaderboard.appendChild(entryElement);
+            });
+            if (state.currentUser && !state.leaderboard.find(entry => entry.id === state.currentUser.id)) {
+                state.leaderboard.push({
+                    id: state.currentUser.id,
+                    name: state.currentUser.name,
+                    wordsLearned: state.currentUser.wordsLearned || 0
+                });
+                saveToStorage();
+            }
+        }
+
+        function shareAchievement() {
+            showFeedbackModal('Berbagi', 'Pencapaian Anda telah dibagikan!');
+        }
+
+        // Recording Mode
+        function toggleRecording() {
+            state.isRecording = !state.isRecording;
+            const micBtn = document.getElementById('micBtn');
+            const recordStatus = document.getElementById('recordStatus');
+            const recordingWave = document.getElementById('recordingWave');
+            const playbackBtn = document.getElementById('playbackBtn');
+
+            micBtn.classList.toggle('recording', state.isRecording);
+            recordStatus.textContent = state.isRecording ? 'Merekam...' : 'Tekan untuk mulai merekam';
+            recordingWave.style.display = state.isRecording ? 'flex' : 'none';
+            playbackBtn.style.display = state.isRecording ? 'none' : 'inline-block';
+
+            if (!state.isRecording) {
+                showFeedbackModal('Rekaman Selesai', 'Rekaman Anda telah disimpan!');
+                document.getElementById('pronunciationFeedback').textContent = 'Pengucapan baik, coba lagi untuk skor lebih tinggi!';
+                document.getElementById('scoreDisplay').style.display = 'block';
+                document.getElementById('scoreDisplay').textContent = '85%';
+            }
+            playClickSound();
         }
 
         function playRecording() {
-            // This function is dynamically created in toggleRecording
+            showFeedbackModal('Putar', 'Memutar rekaman Anda...');
+            playClickSound();
         }
 
-        // Feedback Functions
-        function showSuccessMessage(message) {
-            const messageEl = document.createElement('div');
-            messageEl.className = 'success-message';
-            messageEl.textContent = message;
-            document.body.appendChild(messageEl);
-            
-            playCorrectSound();
-            
+        function compareWithNarrator() {
+            showFeedbackModal('Perbandingan', 'Pengucapan Anda 85% mirip dengan narator!');
+        }
+
+        function nextSentence() {
+            document.getElementById('recordSentence').textContent = 'Kiki melihat kupu-kupu yang cantik.';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            document.getElementById('playbackBtn').style.display = 'none';
+            document.getElementById('pronunciationFeedback').textContent = 'Belum ada rekaman.';
+            playClickSound();
+        }
+
+        // UI Interactions
+        function showDefinition(word) {
+            const definition = definitions[word] || { definition: 'Definisi tidak tersedia', example: '' };
+            document.getElementById('wordTitle').textContent = word;
+            document.getElementById('wordDefinition').innerHTML = `
+                <p><strong>Definisi:</strong> ${sanitize(definition.definition)}</p>
+                <p><strong>Contoh:</strong> ${sanitize(definition.example)}</p>
+            `;
+            document.getElementById('definitionModal').style.display = 'flex';
+            playClickSound();
+        }
+
+        function playWordAudio() {
+            showFeedbackModal('Audio', 'Memutar audio kata...');
+            playClickSound();
+        }
+
+        function closeModal() {
+            document.getElementById('definitionModal').style.display = 'none';
+            playClickSound();
+        }
+
+        function showFeedbackModal(title, message) {
+            document.getElementById('feedbackTitle').textContent = title;
+            document.getElementById('feedbackMessage').textContent = message;
+            document.getElementById('gameFeedbackModal').style.display = 'flex';
+            playClickSound();
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('gameFeedbackModal').style.display = 'none';
+            playClickSound();
+        }
+
+        function showSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.getElementById('fontSize').value = document.querySelector('.story-text').style.fontSize.replace('px', '') || 20;
+            document.getElementById('language').value = state.currentLanguage;
+            playClickSound();
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+            playClickSound();
+        }
+
+        function adjustFontSize() {
+            const size = document.getElementById('fontSize').value;
+            document.querySelectorAll('.story-text, .game-title, .game-instruction').forEach(el => {
+                el.style.fontSize = `${size}px`;
+            });
+            showNotification(`Ukuran teks diubah ke ${size}px`);
+            playClickSound();
+        }
+
+        function changeLanguage() {
+            state.currentLanguage = document.getElementById('language').value;
+            updateLanguage();
+            showNotification(`Bahasa diubah ke ${state.currentLanguage === 'id' ? 'Indonesia' : 'English'}`);
+            playClickSound();
+        }
+
+        function toggleHighContrast() {
+            state.isHighContrast = !state.isHighContrast;
+            document.body.style.filter = state.isHighContrast ? 'contrast(1.5)' : 'none';
+            document.body.style.background = state.isHighContrast ? '#000' : 'linear-gradient(135deg, #81CFFE 0%, #8BC34A 100%)';
+            showNotification(state.isHighContrast ? 'Kontras tinggi diaktifkan' : 'Kontras tinggi dinonaktifkan');
+            playClickSound();
+        }
+
+        function addNote() {
+            document.getElementById('noteInput').value = '';
+            document.getElementById('noteModal').style.display = 'flex';
+            playClickSound();
+        }
+
+        function saveNote() {
+            const note = document.getElementById('noteInput').value.trim();
+            if (!note) {
+                showFeedbackModal('Peringatan', 'Catatan tidak boleh kosong!');
+                return;
+            }
+            if (note.length > 500) {
+                showFeedbackModal('Peringatan', 'Catatan terlalu panjang!');
+                return;
+            }
+            state.notes.push({ storyId: state.currentStory?.id, text: sanitize(note), date: new Date().toISOString() });
+            if (state.currentUser) {
+                state.currentUser.notes = state.notes;
+                saveToStorage();
+            }
+            document.getElementById('noteModal').style.display = 'none';
+            showFeedbackModal('Berhasil', 'Catatan disimpan!');
+            playClickSound();
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteModal').style.display = 'none';
+            playClickSound();
+        }
+
+        function startVocabularyQuiz() {
+            if (!state.currentStory || !state.currentStory.words.length) {
+                showFeedbackModal('Peringatan', 'Tidak ada kata untuk kuis!');
+                return;
+            }
+            const word = state.currentStory.words[Math.floor(Math.random() * state.currentStory.words.length)];
+            const correctDef = definitions[word]?.definition || 'Definisi tidak tersedia';
+            const wrongDefs = Object.values(definitions)
+                .filter(def => def.definition !== correctDef)
+                .slice(0, 3)
+                .map(def => def.definition);
+            const options = [correctDef, ...wrongDefs].sort(() => Math.random() - 0.5);
+
+            document.getElementById('quizQuestion').textContent = `Apa definisi dari "${word}"?`;
+            document.getElementById('quizOptions').innerHTML = options.map((option, index) => `
+                <button class="btn" onclick="checkQuizAnswer('${option}', '${correctDef}')" onkeypress="e => e.key === 'Enter' && checkQuizAnswer('${option}', '${correctDef}')" role="button" aria-label="Pilih definisi ${option}">${sanitize(option)}</button>
+            `).join('');
+            document.getElementById('quizModal').style.display = 'flex';
+            playClickSound();
+        }
+
+        function checkQuizAnswer(selected, correct) {
+            if (selected === correct) {
+                showFeedbackModal('Benar', 'Jawaban Anda benar! 🎉');
+                createConfetti();
+                playSuccessSound();
+                if (state.currentUser) {
+                    state.currentUser.wordsLearned = (state.currentUser.wordsLearned || 0) + 1;
+                    state.currentUser.storyCoins += 5;
+                    saveToStorage();
+                }
+            } else {
+                showFeedbackModal('Salah', 'Coba lagi! Jawaban yang benar adalah: ' + correct);
+            }
+            document.getElementById('quizModal').style.display = 'none';
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').style.display = 'none';
+            playClickSound();
+        }
+
+        // Tutorial
+        function startTutorial() {
+            if (state.users.length === 0) {
+                state.tutorialStep = 0;
+            }
+            const steps = [
+                'Selamat datang! Klik "Mulai Petualangan" untuk memulai.',
+                'Buat profil Anda untuk melacak progres.',
+                'Pilih cerita dari perpustakaan untuk membaca.',
+                'Mainkan aktivitas untuk belajar kosakata!',
+                'Lihat progres Anda di dashboard.'
+            ];
+            document.getElementById('tutorialText').textContent = steps[state.tutorialStep];
+            document.getElementById('tutorialModal').style.display = 'flex';
+            playClickSound();
+        }
+
+        function nextTutorialStep() {
+            state.tutorialStep++;
+            const steps = [
+                () => showCreateProfile(),
+                () => showProfiles(),
+                () => showLibrary(),
+                () => showActivities(),
+                () => showDashboard()
+            ];
+            if (state.tutorialStep < steps.length) {
+                steps[state.tutorialStep]();
+                document.getElementById('tutorialText').textContent = [
+                    'Selamat datang! Klik "Mulai Petualangan" untuk memulai.',
+                    'Buat profil Anda untuk melacak progres.',
+                    'Pilih cerita dari perpustakaan untuk membaca.',
+                    'Mainkan aktivitas untuk belajar kosakata!',
+                    'Lihat progres Anda di dashboard.'
+                ][state.tutorialStep];
+            } else {
+                closeTutorial();
+            }
+            playClickSound();
+        }
+
+        function closeTutorial() {
+            document.getElementById('tutorialModal').style.display = 'none';
+            showHome();
+            playClickSound();
+        }
+
+        // Progress and Notifications
+        function startProgressAnimation() {
+            if (!state.currentUser) return;
+            const progress = (state.currentUser.wordsLearned % 100) || 65;
+            document.getElementById('levelProgress').style.width = `${progress}%`;
+        }
+
+        function checkDailyGoals() {
+            if (state.currentUser) {
+                const progress = state.currentUser.minutesToday || 0;
+                state.dailyGoal.progress = progress;
+                updateDailyGoalStatus();
+                if (progress >= state.dailyGoal.reading && !state.currentUser.badges?.find(b => b.name === 'Tujuan Harian')) {
+                    state.currentUser.badges = state.currentUser.badges || [];
+                    state.currentUser.badges.push({ name: 'Tujuan Harian', icon: '🏆' });
+                    state.currentUser.storyCoins += 20;
+                    saveToStorage();
+                    showFeedbackModal('Pencapaian', 'Selamat! Anda mencapai tujuan harian!');
+                    createConfetti();
+                }
+            }
+        }
+
+        function updateDailyGoalStatus() {
+            const progress = state.dailyGoal.progress;
+            const goal = state.dailyGoal.reading;
+            document.getElementById('dailyGoalStatus').innerHTML = `Baca ${goal} menit hari ini: <span>${progress}/${goal} menit</span>`;
+            document.getElementById('dailyGoalProgress').style.width = `${(progress / goal) * 100}%`;
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
             setTimeout(() => {
-                messageEl.remove();
+                notification.style.display = 'none';
             }, 3000);
         }
 
         function createConfetti() {
-            const container = document.getElementById('feedback-container');
-            const colors = ['#feca57', '#ff6b6b', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd'];
-            
             for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                container.appendChild(confetti);
-                
                 setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = ['#FFD54F', '#8BC34A', '#81CFFE', '#F8BBD0', '#CE93D8'][Math.floor(Math.random() * 5)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
             }
         }
 
-        function playCorrectSound() {
-            // Create audio context for sound effects
-            if ('AudioContext' in window || 'webkitAudioContext' in window) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const audioContext = new AudioContext();
-                
-                // Create a simple success sound
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.5);
-            }
+        // Sound Effects
+        function playClickSound() {
+            const audio = document.getElementById('clickSound');
+            audio.play().catch(e => console.error('Failed to play click sound:', e));
         }
 
-        // Progress Update Functions
-        function updateProgress(type) {
-            switch(type) {
-                case 'words':
-                    progressData.wordsLearned++;
-                    document.getElementById('words-learned').textContent = progressData.wordsLearned;
-                    break;
-                case 'games':
-                    progressData.gamesPlayed++;
-                    document.getElementById('games-played').textContent = progressData.gamesPlayed;
-                    break;
-                case 'accuracy':
-                    progressData.accuracyRate = Math.min(100, progressData.accuracyRate + 1);
-                    document.getElementById('accuracy-rate').textContent = progressData.accuracyRate + '%';
-                    break;
-                case 'stories':
-                    progressData.storiesCompleted++;
-                    document.getElementById('stories-completed').textContent = progressData.storiesCompleted;
-                    break;
-            }
-            
-            // Save progress to memory (in a real app, this would be saved to a database)
-            saveProgress();
+        function playSuccessSound() {
+            const audio = document.getElementById('successSound');
+            audio.play().catch(e => console.error('Failed to play success sound:', e));
         }
 
-        function saveProgress() {
-            // In a real application, this would save to a backend
-            // For now, we'll just store in a variable
-            console.log('Progress saved:', progressData);
+        function toggleBackgroundMusic() {
+            state.isMusicPlaying = !state.isMusicPlaying;
+            showNotification(state.isMusicPlaying ? 'Musik latar diputar' : 'Musik latar dihentikan');
+            playClickSound();
         }
 
-        // Story Management
-        const stories = [
-            {
-                title: "Petualangan Kucing Kecil",
-                illustration: "🐱",
-                text: "Ada seekor kucing kecil bernama Mimi yang suka bermain di taman. Hari ini Mimi ingin mencari teman baru untuk bermain bersama. Mimi berjalan ke taman dan bertemu dengan seekor anjing yang ramah.",
-                words: ["kucing", "bermain", "taman", "anjing"],
-                questions: [
-                    { blank: "bermain", options: ["bermain", "makan", "tidur", "lari"] },
-                    { blank: "anjing", options: ["anjing", "kucing", "burung", "ikan"] }
-                ]
-            },
-            {
-                title: "Petualangan di Hutan",
-                illustration: "🌳",
-                text: "Seorang anak bernama Budi pergi ke hutan bersama ayahnya. Mereka melihat banyak pohon tinggi dan mendengar suara burung berkicau. Budi sangat senang bisa menjelajahi hutan yang indah.",
-                words: ["hutan", "pohon", "burung", "senang"],
-                questions: [
-                    { blank: "hutan", options: ["hutan", "pantai", "gunung", "sungai"] },
-                    { blank: "burung", options: ["burung", "ikan", "kupu-kupu", "semut"] }
-                ]
-            }
-        ];
-
-        let currentStoryIndex = 0;
-
-        function loadStory(index) {
-            const story = stories[index];
-            document.querySelector('.story-title').textContent = story.title;
-            document.querySelector('.story-illustration').textContent = story.illustration;
-            document.querySelector('.story-text').textContent = story.text;
-            
-            // Update interactive section
-            updateInteractiveSection(story);
-            
-            // Update mini game
-            gameWords = story.words;
-            resetGame();
-        }
-
-        function updateInteractiveSection(story) {
-            const template = document.querySelector('.sentence-template');
-            const wordOptions = document.querySelector('.word-options');
-            
-            // Create sentence with blanks
-            let sentence = story.text.split('.')[0]; // Take first sentence
-            story.questions.forEach(q => {
-                sentence = sentence.replace(q.blank, `<span class="word-blank" data-answer="${q.blank}"></span>`);
-            });
-            
-            template.innerHTML = sentence;
-            
-            // Create word options
-            wordOptions.innerHTML = '';
-            const allOptions = [];
-            story.questions.forEach(q => {
-                allOptions.push(...q.options);
-            });
-            
-            // Remove duplicates and shuffle
-            const uniqueOptions = [...new Set(allOptions)];
-            shuffleArray(uniqueOptions);
-            
-            uniqueOptions.forEach(option => {
-                const wordEl = document.createElement('div');
-                wordEl.className = 'draggable-word';
-                wordEl.draggable = true;
-                wordEl.textContent = option;
-                wordOptions.appendChild(wordEl);
-            });
-            
-            // Reinitialize drag and drop
-            initializeDragAndDrop();
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function nextStory() {
-            currentStoryIndex = (currentStoryIndex + 1) % stories.length;
-            loadStory(currentStoryIndex);
-            updateProgress('stories');
-            showSuccessMessage('Cerita baru dimuat! 📚');
-        }
-
-        function previousStory() {
-            currentStoryIndex = currentStoryIndex === 0 ? stories.length - 1 : currentStoryIndex - 1;
-            loadStory(currentStoryIndex);
-        }
-
-        // Vocabulary Practice
-        const vocabularyWords = [
-            "BERMAIN", "KUCING", "ANJING", "TAMAN", "SENANG",
-            "HUTAN", "POHON", "BURUNG", "ANAK", "AYAH"
-        ];
-
-        let currentVocabIndex = 0;
-
-        function nextVocabularyWord() {
-            currentVocabIndex = (currentVocabIndex + 1) % vocabularyWords.length;
-            document.getElementById('practice-word').textContent = vocabularyWords[currentVocabIndex];
-        }
-
-        function previousVocabularyWord() {
-            currentVocabIndex = currentVocabIndex === 0 ? vocabularyWords.length - 1 : currentVocabIndex - 1;
-            document.getElementById('practice-word').textContent = vocabularyWords[currentVocabIndex];
-        }
-
-        // Difficulty Levels
-        let currentDifficulty = 'easy';
-        const difficultySettings = {
-            easy: { wordCount: 4, timeLimit: null, hints: true },
-            medium: { wordCount: 6, timeLimit: 60, hints: true },
-            hard: { wordCount: 8, timeLimit: 45, hints: false }
-        };
-
-        function changeDifficulty(level) {
-            currentDifficulty = level;
-            const settings = difficultySettings[level];
-            
-            // Update game based on difficulty
-            totalQuestions = settings.wordCount;
-            
-            // Show difficulty indicator
-            showSuccessMessage(`Tingkat kesulitan: ${level.toUpperCase()}`);
-        }
-
-        // Add navigation controls to story section
-        function addStoryNavigation() {
-            const storySection = document.querySelector('.storybook');
-            const navControls = document.createElement('div');
-            navControls.style.textAlign = 'center';
-            navControls.style.marginTop = '20px';
-            navControls.innerHTML = `
-                <button class="audio-btn" onclick="previousStory()">⬅️ Cerita Sebelumnya</button>
-                <button class="audio-btn" onclick="nextStory()">Cerita Selanjutnya ➡️</button>
+        // Language Translation
+        function updateLanguage() {
+            const lang = state.currentLanguage || 'id';
+            document.querySelector('.nav-bar').innerHTML = `
+                <button class="nav-btn ${state.currentPage === 'home' ? 'active' : ''}" onclick="showHome()" role="button" aria-label="${translations[lang].home}">
+                    <div class="nav-icon">🏠</div>
+                    <div>${translations[lang].home}</div>
+                </button>
+                <button class="nav-btn ${state.currentPage === 'library' ? 'active' : ''}" onclick="showLibrary()" role="button" aria-label="${translations[lang].library}">
+                    <div class="nav-icon">📚</div>
+                    <div>${translations[lang].library}</div>
+                </button>
+                <button class="nav-btn ${state.currentPage === 'reader' ? 'active' : ''}" onclick="continueReading()" role="button" aria-label="${translations[lang].read}">
+                    <div class="nav-icon">📖</div>
+                    <div>${translations[lang].read}</div>
+                </button>
+                <button class="nav-btn ${state.currentPage === 'activities' ? 'active' : ''}" onclick="showActivities()" role="button" aria-label="${translations[lang].activities}">
+                    <div class="nav-icon">🎮</div>
+                    <div>${translations[lang].activities}</div>
+                </button>
+                <button class="nav-btn ${state.currentPage === 'dashboard' ? 'active' : ''}" onclick="showDashboard()" role="button" aria-label="${translations[lang].progress}">
+                    <div class="nav-icon">📊</div>
+                    <div>${translations[lang].progress}</div>
+                </button>
+                <button class="nav-btn ${state.currentPage === 'create' ? 'active' : ''}" onclick="showStoryCreation()" role="button" aria-label="${translations[lang].createStory}">
+                    <div class="nav-icon">✍️</div>
+                    <div>${translations[lang].createStory}</div>
+                </button>
             `;
-            storySection.appendChild(navControls);
-        }
-
-        // Add vocabulary navigation to listen section
-        function addVocabularyNavigation() {
-            const listenSection = document.querySelector('.listen-repeat');
-            const vocabNav = document.createElement('div');
-            vocabNav.style.textAlign = 'center';
-            vocabNav.style.marginTop = '20px';
-            vocabNav.innerHTML = `
-                <button class="audio-btn" onclick="previousVocabularyWord()">⬅️ Kata Sebelumnya</button>
-                <button class="audio-btn" onclick="nextVocabularyWord()">Kata Selanjutnya ➡️</button>
-            `;
-            listenSection.appendChild(vocabNav);
-        }
-
-        // Add difficulty selector to games section
-        function addDifficultySelector() {
-            const gamesSection = document.querySelector('.mini-game');
-            const difficultySelector = document.createElement('div');
-            difficultySelector.style.textAlign = 'center';
-            difficultySelector.style.marginBottom = '20px';
-            difficultySelector.innerHTML = `
-                <h3>Pilih Tingkat Kesulitan:</h3>
-                <div style="margin-top: 10px;">
-                    <button class="audio-btn" onclick="changeDifficulty('easy')" style="margin: 5px;">😊 Mudah</button>
-                    <button class="audio-btn" onclick="changeDifficulty('medium')" style="margin: 5px;">😐 Sedang</button>
-                    <button class="audio-btn" onclick="changeDifficulty('hard')" style="margin: 5px;">😤 Sulit</button>
-                </div>
-            `;
-            gamesSection.insertBefore(difficultySelector, gamesSection.querySelector('.picture-matching'));
-        }
-
-        // Initialize app
-        function initializeApp() {
-            loadStory(0);
-            initializeDragAndDrop();
-            addStoryNavigation();
-            addVocabularyNavigation();
-            addDifficultySelector();
-            
-            // Load initial progress
-            document.getElementById('words-learned').textContent = progressData.wordsLearned;
-            document.getElementById('stories-completed').textContent = progressData.storiesCompleted;
-            document.getElementById('games-played').textContent = progressData.gamesPlayed;
-            document.getElementById('accuracy-rate').textContent = progressData.accuracyRate + '%';
-            
-            console.log('Interactive Storybook initialized successfully!');
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', initializeApp);
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case '1':
-                        e.preventDefault();
-                        showSection('story');
-                        break;
-                    case '2':
-                        e.preventDefault();
-                        showSection('interactive');
-                        break;
-                    case '3':
-                        e.preventDefault();
-                        showSection('games');
-                        break;
-                    case '4':
-                        e.preventDefault();
-                        showSection('listen');
-                        break;
-                    case '5':
-                        e.preventDefault();
-                        showSection('progress');
-                        break;
-                }
-            }
-            
-            if (e.key === 'Space' && currentSection === 'story') {
-                e.preventDefault();
-                playStoryAudio();
-            }
-        });
-
-        // Touch support for mobile devices
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
-            
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    // Swipe left - next story/word
-                    if (currentSection === 'story') {
-                        nextStory();
-                    } else if (currentSection === 'listen') {
-                        nextVocabularyWord();
-                    }
-                } else {
-                    // Swipe right - previous story/word
-                    if (currentSection === 'story') {
-                        previousStory();
-                    } else if (currentSection === 'listen') {
-                        previousVocabularyWord();
-                    }
-                }
-            }
-        }
-
-        // Accessibility improvements
-        function addAccessibilityFeatures() {
-            // Add ARIA labels
-            document.querySelectorAll('.nav-btn').forEach((btn, index) => {
-                btn.setAttribute('aria-label', `Navigate to ${btn.textContent}`);
-                btn.setAttribute('tabindex', '0');
-            });
-            
-            // Add keyboard navigation for drag and drop
-            document.querySelectorAll('.draggable-word').forEach(word => {
-                word.setAttribute('tabindex', '0');
-                word.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        // Find first empty blank and fill it
-                        const emptyBlank = document.querySelector('.word-blank:not([data-filled])');
-                        if (emptyBlank) {
-                            emptyBlank.textContent = word.textContent;
-                            emptyBlank.style.background = 'rgba(85, 239, 196, 0.8)';
-                            emptyBlank.setAttribute('data-filled', 'true');
-                        }
-                    }
+            // Update page-specific text
+            document.querySelector('#splashScreen .logo').textContent = translations[lang].startAdventure;
+            document.querySelector('#splashScreen button:nth-child(3)').textContent = translations[lang].selectProfile;
+            document.querySelector('#splashScreen button:nth-child(4)').textContent = translations[lang].parentalDashboard;
+            if (state.currentPage === 'createProfile') {
+                document.querySelector('#createProfilePage h2').textContent = translations[lang].createProfile;
+                document.querySelectorAll('#createProfilePage .btn').forEach((btn, i) => {
+                    btn.textContent = i === 0 ? translations[lang].save : translations[lang].cancel;
                 });
-            });
-        }
-
-        // Performance optimization
-        function optimizePerformance() {
-            // Lazy load animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationPlayState = 'running';
-                    }
+            }
+            if (state.currentPage === 'storyCreation') {
+                document.querySelector('#storyCreationPage h2').textContent = translations[lang].createStoryTitle;
+                document.querySelectorAll('#storyCreationPage .btn').forEach((btn, i) => {
+                    btn.textContent = i === 0 ? translations[lang].saveStory : translations[lang].cancel;
                 });
-            });
-            
-            document.querySelectorAll('.story-illustration').forEach(el => {
-                observer.observe(el);
-            });
+            }
+            if (state.currentPage === 'reader') {
+                document.querySelector('#readerPage .reader-header button:nth-child(3)').textContent = `❤️ ${translations[lang].favorite}`;
+                document.querySelector('#readerPage .reader-header button:nth-child(4)').textContent = `🎤 ${translations[lang].recordMode}`;
+                document.querySelector('#readerPage .reader-header button:nth-child(5)').textContent = `🎮 ${translations[lang].activitiesTitle}`;
+                document.querySelector('#readerPage .reader-header button:nth-child(6)').textContent = `⚙️ ${translations[lang].settings}`;
+                document.querySelector('#readerPage .text-panel button:nth-child(2)').textContent = `✍️ ${translations[lang].addNote}`;
+                document.querySelector('#readerPage .text-panel button:nth-child(3)').textContent = `❓ ${translations[lang].vocabQuiz}`;
+            }
+            if (state.currentPage === 'settings') {
+                document.querySelector('#settingsModal h3').textContent = translations[lang].settingsTitle;
+                document.querySelector('#settingsModal .filter-group:nth-child(1) label').textContent = translations[lang].fontSize;
+                document.querySelector('#settingsModal .filter-group:nth-child(2) label').textContent = translations[lang].language;
+                document.querySelector('#settingsModal button:nth-child(4)').textContent = `🌗 ${translations[lang].highContrast}`;
+                document.querySelector('#settingsModal button:nth-child(5)').textContent = translations[lang].feedbackClose;
+            }
+            if (state.currentPage === 'note') {
+                document.querySelector('#noteModal h3').textContent = translations[lang].noteTitle;
+                document.querySelectorAll('#noteModal .btn').forEach((btn, i) => {
+                    btn.textContent = i === 0 ? translations[lang].save : translations[lang].cancel;
+                });
+            }
+            if (state.currentPage === 'quiz') {
+                document.querySelector('#quizModal h3').textContent = translations[lang].quizTitle;
+                document.querySelector('#quizModal button:nth-child(3)').textContent = translations[lang].checkAnswer;
+                document.querySelector('#quizModal button:nth-child(4)').textContent = translations[lang].feedbackClose;
+            }
+            if (state.currentPage === 'tutorial') {
+                document.querySelector('#tutorialModal h3').textContent = translations[lang].tutorialTitle;
+                document.querySelector('#tutorialModal button:nth-child(2)').textContent = translations[lang].next;
+                document.querySelector('#tutorialModal button:nth-child(3)').textContent = translations[lang].skip;
+            }
         }
 
-        // Add final initialization
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            addAccessibilityFeatures();
-            optimizePerformance();
+            init();
+            setTimeout(startTutorial, 1000);
         });
     </script>
 </body>
