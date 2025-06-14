@@ -1,53 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!--
-    Instruksi:
-    1. Simpan file ini sebagai Netflix.html
-    2. Pastikan Netflix.css dan Netflix.js di folder yang sama
-    3. Buka Netflix.html di browser atau jalankan dengan Live Server
-  -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Netflix Clone</title>
-  <link rel="stylesheet" href="Netflix.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone - Enhanced</title>
+    <link href="./output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hanya style penting untuk pemutaran */
+        .movie-detail-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #181818;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-out, visibility 0s linear 0.2s;
+        }
+        .movie-detail-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.2s ease-out;
+        }
+        .thumbnail-video {
+            width: 100%;
+            padding-top: 56.25%;
+            position: relative;
+            background-color: black;
+            overflow: hidden;
+        }
+        .thumbnail-video iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
-<body>
-  <!-- HEADER -->
-  <header>
-    <div class="logo">MyFlix</div>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#series">Series</a></li>
-        <li><a href="#movies">Movies</a></li>
-        <li><a href="#new">New & Popular</a></li>
-        <li><a href="#mylist">My List</a></li>
-      </ul>
-    </nav>
-  </header>
+<body class="bg-black text-white font-sans">
+    <!-- Header -->
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 p-4 flex items-center justify-between bg-gradient-to-b from-black to-transparent">
+        <div><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1920px-Netflix_2015_logo.svg.png" alt="Netflix Logo" class="h-8"></div>
+        <div><button class="text-white">Profile</button></div>
+    </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero" id="home">
-    <h1>Featured Videos</h1>
-  </section>
+    <!-- Hero Section -->
+    <section id="hero-section" class="relative h-screen flex items-end pb-16 bg-cover bg-center" style="background-image: url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40ff-8d53-a39118bcabff/f80b2a59-195c-4f15-a7b3-c351f0ee3a85/ID-en-20240506-popsignuptwoweeks-perspective_alpha_website_large.jpg');">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+        <div id="hero-content" class="relative z-10 p-8 max-w-xl">
+            <h1 class="text-4xl font-bold mb-4">Loki</h1>
+            <p class="mb-6">Petualangan God of Mischief Loki berlanjut...</p>
+            <button id="play-button" class="bg-white text-black px-6 py-3 rounded-md">Play</button>
+        </div>
+        <div id="trailer-container" class="absolute inset-0 hidden">
+            <iframe id="hero-iframe" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen class="w-full h-full"></iframe>
+            <button id="back-to-hero-button" class="absolute top-4 left-4 bg-black/50 text-white p-2 rounded-full">Back</button>
+        </div>
+    </section>
 
-  <!-- SEARCH BAR -->
-  <div class="controls">
-    <input type="text" id="search" placeholder="Search videos..." oninput="filterVideos()">
-  </div>
+    <!-- Movie Cards (Contoh) -->
+    <main class="px-4 py-8">
+        <section>
+            <h2 class="text-xl font-semibold mb-4">Trending Now</h2>
+            <div id="row-trending" class="flex overflow-x-scroll space-x-4">
+                <div class="movie-card w-40 flex-shrink-0 cursor-pointer" data-trailer-url="https://www.youtube.com/embed/nW948Va-l10">
+                    <img src="https://image.tmdb.org/t/p/w500/rMvTnWoCuyeadqzGpsxkSygfhlJ.jpg" alt="Loki" class="rounded-lg">
+                </div>
+                <div class="movie-card w-40 flex-shrink-0 cursor-pointer" data-trailer-url="https://www.youtube.com/embed/SWp5D_fB24I">
+                    <img src="https://image.tmdb.org/t/p/w500/uJSS08R69C9b0Yy49aN7LwP0vWJ.jpg" alt="Squid Game" class="rounded-lg">
+                </div>
+            </div>
+        </section>
+    </main>
 
-  <!-- VIDEO GRID -->
-  <section class="video-grid" id="videos"></section>
-
-  <!-- MODAL PLAYER -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span id="close">&times;</span>
-      <video id="player" controls autoplay></video>
+    <!-- Movie Detail Popup -->
+    <div id="movie-detail-popup" class="movie-detail-popup">
+        <div class="thumbnail-video">
+            <iframe id="popup-iframe" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <button id="popup-close-button" class="absolute top-2 right-2 bg-black/70 text-white p-2 rounded-full">X</button>
     </div>
-  </div>
+    <div id="overlay" class="fixed inset-0 bg-black/70 z-40 hidden"></div>
 
-  <script src="Netflix.js"></script>
+    <footer class="p-8 text-center text-gray-500">© 2025 Netflix Clone</footer>
+
+    <script src="Netflix.js"></script>
 </body>
 </html>
