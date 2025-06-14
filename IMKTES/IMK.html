@@ -1,66 +1,69 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Storybook</title>
+    <title>Belajar Interaktif 2.0</title>
     <link rel="stylesheet" href="IMK.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto :wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <h1>Interactive Storybook</h1>
-        <nav>
-            <button id="story-btn" aria-label="Story"><i class="fas fa-book"></i> Story</button>
-            <button id="minigame-btn" disabled aria-label="Mini-Game"><i class="fas fa-gamepad"></i> Mini-Game</button>
-            <button id="recording-btn" disabled aria-label="Listen & Repeat"><i class="fas fa-microphone"></i> Listen & Repeat</button>
-            <button id="dashboard-btn" aria-label="Dashboard"><i class="fas fa-chart-bar"></i> Dashboard</button>
-        </nav>
+<body class="light-mode">
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="nav-logo">📚 Belajar Interaktif</div>
+        <nav class="nav-buttons" id="navButtons"></nav>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </header>
-    <main>
-        <section id="story" class="section active">
-            <div class="illustration-container">
-                <img id="story-illustration" src="https://via.placeholder.com/600x400?text=Cat+Adventure" alt="Story Illustration" loading="lazy">
+
+    <!-- Konten Utama -->
+    <main id="app">
+        <!-- Splash Screen -->
+        <section id="splashScreen" class="page active">
+            <div class="splash-content">
+                <h1>📚 Selamat Datang!</h1>
+                <p>Aplikasi pembelajaran interaktif untuk anak-anak</p>
+                <button onclick="showProfiles()" class="btn primary">Mulai</button>
             </div>
-            <div class="audio-controls">
-                <audio id="story-audio">
-                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-                    Your browser does not support audio.
-                </audio>
-                <input type="range" id="volume-control" min="0" max="1" step="0.1" value="1" aria-label="Volume Control">
-                <button id="play-pause-btn" aria-label="Play or Pause"><i class="fas fa-play"></i></button>
-            </div>
-            <p id="story-text"></p>
-            <div id="word-bank"></div>
-            <button id="next-segment" class="btn" style="display:none;">Next</button>
         </section>
-        <section id="minigame" class="section hidden">
-            <h2>Mini-Game: Match the Picture</h2>
-            <div id="minigame-content"></div>
-            <button id="check-minigame" class="btn">Check</button>
-        </section>
-        <section id="recording" class="section hidden">
-            <h2>Listen & Repeat</h2>
-            <p>Choose a word to practice:</p>
-            <select id="word-select" aria-label="Choose Word"></select>
-            <button id="record-btn" class="btn">Record</button>
-            <button id="stop-btn" class="btn" disabled>Stop</button>
-            <audio id="playback" controls></audio>
-        </section>
-        <section id="dashboard" class="section hidden">
-            <h2>Progress Dashboard</h2>
-            <h3>Completed Stories</h3>
-            <ul id="completed-stories"></ul>
-            <h3>Mastered Words</h3>
-            <ul id="mastered-words"></ul>
-        </section>
-        <canvas id="confetti-canvas"></canvas>
+
+        <!-- Profil Pengguna -->
+        <section id="profilesPage" class="page"></section>
+        <section id="createProfilePage" class="page"></section>
+
+        <!-- Perpustakaan Cerita -->
+        <section id="libraryPage" class="page"></section>
+        <section id="readerPage" class="page"></section>
+        <section id="recordMode" class="page"></section>
+
+        <!-- Aktivitas Interaktif -->
+        <section id="activityPage" class="page"></section>
+        <section id="gameArea" class="game-container"></section>
+
+        <!-- Dashboard -->
+        <section id="dashboardPage" class="page"></section>
+        <section id="parentalDashboardPage" class="page"></section>
     </main>
-    <audio id="feedback-sound">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
-    </audio>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.min.js"></script>
-    <script src="IMK.js"></script>
+
+    <!-- Modal -->
+    <div id="tutorialModal" class="modal">
+        <div class="modal-content">
+            <h2>📘 Tutorial</h2>
+            <p id="tutorialText"></p>
+            <div class="modal-actions">
+                <button onclick="nextTutorialStep()">Lanjut</button>
+                <button onclick="skipTutorial()">Lewati</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js "></script>
+    <script src="data.js"></script>
+    <script src="utils.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Ejaan - Interactive Storybook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #81CFFE 0%, #8BC34A 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .splash-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .character {
+            width: 200px;
+            height: 200px;
+            background: #FFD54F;
+            border-radius: 50%;
+            margin: 20px 0;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .character::before {
+            content: "👧";
+            font-size: 100px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn {
+            background: #FFD54F;
+            color: #333;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .home-page, .activity-page {
+            display: none;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #F8BBD0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #8BC34A;
+            width: 65%;
+            transition: width 0.5s ease;
+        }
+
+        .carousel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .story-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .story-card {
+            background: linear-gradient(135deg, #CE93D8, #F8BBD0);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .story-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .word-to-spell {
+            font-size: 24px;
+            color: #333;
+            background: #f9f9f9;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .drag-drop-area {
+            background: #f9f9f9;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            min-height: 100px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .letter-piece {
+            background: #FFD54F;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: grab;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .letter-piece.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .game-progress {
+            width: 100%;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .game-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8BC34A, #FFD54F);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .score {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="splashScreen" class="splash-screen">
+        <div class="logo">📚 Latihan Ejaan</div>
+        <div class="character"></div>
+        <p style="color: white; font-size: 18px; margin-bottom: 30px;">
+            Susun huruf untuk melatih ejaan!
+        </p>
+        <button class="btn" onclick="showHome()">Mulai Latihan</button>
+    </div>
+
+    <div id="homePage" class="home-page">
+        <div class="container">
+            <div class="header">
+                <div class="profile">
+                    <div class="avatar">👧</div>
+                    <div>
+                        <div class="level-info">
+                            <strong>Sari</strong> - Penjelajah Level 2
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="showActivities()">Latihan Ejaan</button>
+            </div>
+
+            <div class="carousel">
+                <h2 class="carousel-title">🌟 Mulai Latihan</h2>
+                <div class="story-cards">
+                    <div class="story-card" onclick="showActivities()">
+                        <div style="font-size: 48px; margin-bottom: 12px;">✍️</div>
+                        <h3>Latihan Ejaan</h3>
+                        <p>Susun huruf-huruf untuk membuat kata yang benar!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="activityPage" class="activity-page">
+        <div class="container">
+            <div class="game-container">
+                <h2 class="game-title" id="gameTitle">🎯 Latihan Ejaan</h2>
+                <p id="gameInstruction">Seret huruf-huruf untuk menyusun kata yang benar!</p>
+                
+                <div class="game-progress">
+                    <div class="game-progress-fill" id="gameProgress"></div>
+                </div>
+
+                <div class="word-to-spell" id="wordToSpell"></div>
+                <div class="drag-drop-area" id="dropZone">
+                    <p style="color: #999;">Seret huruf-huruf ke sini</p>
+                </div>
+
+                <div class="word-pieces" id="letterPieces" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px;"></div>
+                
+                <button class="btn" onclick="checkAnswer()" style="margin-top: 20px;">Periksa</button>
+                <button class="btn" onclick="nextWord()" id="nextButton" style="display: none;">Selanjutnya</button>
+                
+                <div class="result" id="result" aria-live="polite"></div>
+                <div class="score" id="score">Skor: 0/0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="gameFeedbackModal">
+        <div class="modal-content">
+            <h3 id="feedbackTitle">Hasil</h3>
+            <div id="feedbackMessage"></div>
+            <button class="btn" onclick="closeFeedbackModal()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'splash';
+        let gameProgress = 0;
+        let correctCount = 0;
+        let totalCount = 0;
+        let currentWord;
+        const words = ["apel", "buku", "ikan", "emas", "hujan"];
+
+        function init() {
+            selectRandomWord();
+            setupDragAndDrop();
+        }
+
+        function showHome() {
+            hideAllPages();
+            document.getElementById('homePage').style.display = 'block';
+            currentPage = 'home';
+        }
+
+        function showActivities() {
+            hideAllPages();
+            document.getElementById('activityPage').style.display = 'block';
+            currentPage = 'activities';
+            resetGame();
+        }
+
+        function hideAllPages() {
+            const pages = ['splashScreen', 'homePage', 'activityPage'];
+            pages.forEach(page => {
+                document.getElementById(page).style.display = 'none';
+            });
+            document.getElementById('gameFeedbackModal').style.display = 'none';
+        }
+
+        function selectRandomWord() {
+            const randomIndex = Math.floor(Math.random() * words.length);
+            currentWord = words[randomIndex];
+            document.getElementById('wordToSpell').textContent = currentWord;
+            setupLetterPieces();
+        }
+
+        function setupLetterPieces() {
+            const letterPieces = document.getElementById('letterPieces');
+            letterPieces.innerHTML = '';
+            const dropZone = document.getElementById('dropZone');
+            dropZone.innerHTML = '<p style="color: #999;">Seret huruf-huruf ke sini</p>';
+
+            const letters = currentWord.split('');
+            const shuffledLetters = letters.sort(() => Math.random() - 0.5);
+
+            shuffledLetters.forEach(letter => {
+                const letterPiece = document.createElement('div');
+                letterPiece.className = 'letter-piece';
+                letterPiece.draggable = true;
+                letterPiece.textContent = letter;
+                letterPieces.appendChild(letterPiece);
+            });
+
+            setupDragAndDrop();
+        }
+
+        function setupDragAndDrop() {
+            const letterPieces = document.querySelectorAll('.letter-piece');
+            const dropZone = document.getElementById('dropZone');
+
+            letterPieces.forEach(piece => {
+                piece.addEventListener('dragstart', handleDragStart);
+                piece.addEventListener('dragend', handleDragEnd);
+            });
+
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('drop', handleDrop);
+        }
+
+        function handleDragStart(e) {
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const letterText = e.dataTransfer.getData('text/plain');
+            const dropZone = document.getElementById('dropZone');
+
+            if (dropZone.querySelector('p')) {
+                dropZone.querySelector('p').remove();
+            }
+
+            const droppedLetter = document.createElement('span');
+            droppedLetter.textContent = letterText;
+            droppedLetter.style.background = '#8BC34A';
+            droppedLetter.style.color = 'white';
+            droppedLetter.style.padding = '4px 8px';
+            droppedLetter.style.borderRadius = '4px';
+            droppedLetter.style.margin = '2px';
+            droppedLetter.style.display = 'inline-block';
+            dropZone.appendChild(droppedLetter);
+
+            document.querySelectorAll('.letter-piece').forEach(piece => {
+                if (piece.textContent === letterText) {
+                    piece.remove();
+                }
+            });
+
+            updateGameProgress();
+        }
+
+        function checkAnswer() {
+            const dropZone = document.getElementById('dropZone');
+            const droppedLetters = Array.from(dropZone.children).map(el => el.textContent.trim());
+            const resultDiv = document.getElementById('result');
+            const nextButton = document.getElementById('nextButton');
+
+            if (droppedLetters.length === 0) {
+                showFeedbackModal('Perhatian!', 'Silakan susun huruf-huruf terlebih dahulu.');
+                resultDiv.textContent = 'Silakan susun huruf-huruf.';
+                resultDiv.style.color = 'orange';
+            } else {
+                totalCount++;
+                const formedWord = droppedLetters.join('');
+                if (formedWord === currentWord) {
+                    correctCount++;
+                    showFeedbackModal('Hebat!', 'Ejaan Anda benar! 🎉');
+                    resultDiv.textContent = 'Benar! 🎉';
+                    resultDiv.style.color = 'green';
+                    updateGameProgress(100);
+                } else {
+                    showFeedbackModal('Coba Lagi!', `Ejaan yang benar adalah "${currentWord}".`);
+                    resultDiv.textContent = `Salah, ejaan yang benar adalah "${currentWord}".`;
+                    resultDiv.style.color = 'red';
+                }
+                document.getElementById('score').textContent = `Skor: ${correctCount}/${totalCount}`;
+                nextButton.style.display = 'inline-block';
+            }
+        }
+
+        function nextWord() {
+            gameProgress = 0;
+            updateGameProgress(0);
+            document.getElementById('result').textContent = '';
+            document.getElementById('nextButton').style.display = 'none';
+            selectRandomWord();
+        }
+
+        function resetGame() {
+            gameProgress = 0;
+            correctCount = 0;
+            totalCount = 0;
+            updateGameProgress(0);
+            document.getElementById('score').textContent = 'Skor: 0/0';
+            document.getElementById('result').textContent = '';
+            document.getElementById('nextButton').style.display = 'none';
+            selectRandomWord();
+        }
+
+        function showFeedbackModal(title, message) {
+            document.getElementById('feedbackTitle').textContent = title;
+            document.getElementById('feedbackMessage').textContent = message;
+            document.getElementById('gameFeedbackModal').style.display = 'flex';
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('gameFeedbackModal').style.display = 'none';
+        }
+
+        function updateGameProgress(progress = null) {
+            if (progress !== null) {
+                gameProgress = progress;
+            } else {
+                const totalLetters = currentWord.length;
+                const droppedLetters = document.getElementById('dropZone').children.length;
+                gameProgress = (droppedLetters / totalLetters) * 100;
+            }
+            document.getElementById('gameProgress').style.width = gameProgress + '%';
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

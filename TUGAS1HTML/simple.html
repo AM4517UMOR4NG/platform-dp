@@ -1,1749 +1,720 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Storybook</title>
+    <title>Netflix Clone - Enhanced</title>
+    <link href="./output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script> 
     <style>
-        /* CSS remains unchanged as per your request */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Sembunyikan scrollbar tapi tetap bisa di-scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #81CFFE 0%, #8BC34A 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 16px;
+        /* Custom scroll snap untuk slider */
+        .scroll-snap-x {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
         }
-
-        /* Landing Page */
-        .splash-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            animation: fadeIn 1.5s ease-in;
+        .scroll-snap-start {
+            scroll-snap-align: start;
         }
-
-        .logo {
-            font-size: 48px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-
-        .character {
-            width: 200px;
-            height: 200px;
-            background: #FFD54F;
-            border-radius: 50%;
-            margin: 20px 0;
+        /* Movie Card & Overlay */
+        .movie-card {
             position: relative;
-            animation: float 3s ease-in-out infinite;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, z-index 0.3s ease-in-out;
         }
-
-        .character::before {
-            content: "👧";
-            font-size: 100px;
+        .movie-card:hover {
+            transform: scale(1.1); /* Sedikit lebih besar saat hover */
+            z-index: 20; /* Pastikan di atas kartu lain */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .movie-overlay {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .btn {
-            background: #FFD54F;
-            color: #333;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            margin: 8px;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        /* Home Page */
-        .home-page {
-            display: none;
-        }
-
-        .header {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 60px;
-            height: 60px;
-            background: #F8BBD0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-        }
-
-        .level-info {
-            color: #333;
-        }
-
-        .progress-bar {
-            width: 200px;
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #8BC34A;
-            width: 65%;
-            transition: width 0.5s ease;
-        }
-
-        .carousel {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .carousel-title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 16px;
-        }
-
-        .story-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-        }
-
-        .story-card {
-            background: linear-gradient(135deg, #CE93D8, #F8BBD0);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .story-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .category-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .category-card:hover {
-            transform: scale(1.05);
-        }
-
-        .category-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        /* Story Library */
-        .library-page {
-            display: none;
-        }
-
-        .filters {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .filter-select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        /* Story Reader */
-        .reader-page {
-            display: none;
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .reader-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .reader-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            min-height: 400px;
-        }
-
-        .text-panel {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .story-text {
-            font-size: 20px;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .highlighted {
-            background: #FFD54F;
-            padding: 2px 4px;
-            border-radius: 4px;
-            animation: pulse 1s;
-        }
-
-        .audio-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: #f5f5f5;
-            padding: 16px;
-            border-radius: 12px;
-        }
-
-        .play-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #8BC34A;
-            color: white;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .play-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .audio-progress {
-            flex: 1;
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .audio-progress-fill {
-            height: 100%;
-            background: #8BC34A;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .illustration-panel {
-            background: linear-gradient(135deg, #81CFFE, #8BC34A);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .illustration {
-            font-size: 120px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .hotspot {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #FFD54F;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: bounce 2s infinite;
-        }
-
-        /* Activity Pages */
-        .activity-page {
-            display: none;
-        }
-
-        .game-container {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .game-title {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .drag-drop-area {
-            background: #f9f9f9;
-            border: 2px dashed #ddd;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 20px 0;
-            min-height: 100px;
-            position: relative;
-        }
-
-        .word-pieces {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .word-piece {
-            background: #FFD54F;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: grab;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .word-piece:hover {
-            transform: scale(1.05);
-        }
-
-        .word-piece.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
-        }
-
-        .game-progress {
-            width: 100%;
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .game-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #8BC34A, #FFD54F);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        /* Dashboard */
-        .dashboard-page {
-            display: none;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            color: #8BC34A;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .badge-collection {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .badges-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .badge {
-            background: linear-gradient(135deg, #CE93D8, #F8BBD0);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            color: white;
-            font-size: 12px;
-        }
-
-        .badge-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        /* Recording Mode */
-        .record-mode {
-            display: none;
-            text-align: center;
-        }
-
-        .mic-container {
-            margin: 30px 0;
-        }
-
-        .mic-btn {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #FF5722;
-            color: white;
-            border: none;
-            font-size: 40px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .mic-btn.recording {
-            animation: pulse 1s infinite;
-            background: #F44336;
-        }
-
-        .recording-wave {
-            width: 100%;
-            height: 60px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .wave-bar {
-            width: 4px;
-            background: #8BC34A;
-            margin: 0 2px;
-            border-radius: 2px;
-            animation: wave 1s ease-in-out infinite;
-        }
-
-        .score-display {
-            font-size: 48px;
-            color: #FFD54F;
-            margin: 20px 0;
-        }
-
-        /* Navigation */
-        .nav-bar {
-            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
-            padding: 16px;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .nav-btn {
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 12px;
+            background: rgba(0, 0, 0, 0.85); /* Lebih gelap saat overlay aktif */
+            color: white;
+            padding: 8px;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
             display: flex;
             flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            justify-content: center;
+            height: 100%;
+            pointer-events: none; /* Agar tidak menghalangi event hover pada card */
         }
-
-        .nav-btn.active {
-            color: #8BC34A;
-            background: rgba(139, 195, 74, 0.1);
-        }
-
-        .nav-icon {
-            font-size: 24px;
-            margin-bottom: 4px;
-        }
-
-        /* Tooltip */
-        .tooltip {
-            position: absolute;
-            background: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .tooltip.show {
+        .movie-card:hover .movie-overlay {
+            transform: translateY(0);
             opacity: 1;
+            pointer-events: auto; /* Aktifkan pointer events saat overlay muncul */
         }
 
-        /* Modal */
-        .modal {
-            position: fixed;
+        /* Movie Detail Pop-up */
+        .movie-detail-popup {
+            position: absolute;
+            background: #181818; /* Background gelap khas Netflix */
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            z-index: 50; /* Pastikan di atas semua elemen lain */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+            pointer-events: none;
+            width: 320px; /* Lebar pop-up, sesuaikan */
+            max-width: 90vw; /* Maksimum lebar layar */
+        }
+        .movie-detail-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .movie-detail-popup .thumbnail-video {
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            position: relative;
+            background-color: black;
+            overflow: hidden;
+        }
+        .movie-detail-popup .thumbnail-video iframe,
+        .movie-detail-popup .thumbnail-video img {
+            position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .text-shadow-md {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
+        /* Search input specific styles */
+        #search-input {
+            width: 0;
+            opacity: 0;
+            transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
-
-        /* Confetti */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #FFD54F;
-            animation: confetti-fall 3s linear infinite;
-            z-index: 1000;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes wave {
-            0%, 100% { height: 20px; }
-            50% { height: 40px; }
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .reader-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .container {
-                padding: 12px;
-            }
-            
-            .logo {
-                font-size: 36px;
-            }
-            
-            .nav-bar {
-                padding-bottom: calc(16px + env(safe-area-inset-bottom));
-            }
-        }
-
-        /* Hide scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #999;
+        #search-input.expanded {
+            width: 200px; /* Lebar saat diperluas */
+            opacity: 1;
         }
     </style>
 </head>
-<body>
-    <!-- Landing Page -->
-    <div id="splashScreen" class="splash-screen">
-        <div class="logo">📚 Interactive Storybook</div>
-        <div class="character"></div>
-        <p style="color: white; font-size: 18px; margin-bottom: 30px;">
-            Belajar kosakata sambil bercerita!
-        </p>
-        <button class="btn" onclick="showHome()">Mulai Petualangan</button>
-        <button class="btn" onclick="showProfiles()">Pilih Profil</button>
-    </div>
+<body class="bg-black text-white font-sans">
 
-    <!-- Home Page -->
-    <div id="homePage" class="home-page">
-        <div class="container">
-            <div class="header">
-                <div class="profile">
-                    <div class="avatar">👧</div>
-                    <div>
-                        <div class="level-info">
-                            <strong>Sari</strong> - Penjelajah Level 2
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill"></div>
-                        </div>
-                    </div>
-                </div>
-                <button class="btn" onclick="showDashboard()">Dashboard</button>
-            </div>
-
-            <div class="carousel">
-                <h2 class="carousel-title">🌟 Cerita Terbaru</h2>
-                <div class="story-cards">
-                    <div class="story-card" onclick="showStoryDetail('petualangan-hutan')">
-                        <div style="font-size: 48px; margin-bottom: 12px;">🌳</div>
-                        <h3>Petualangan di Hutan</h3>
-                        <p>Ikuti Kiki menemukan hewan-hewan lucu!</p>
-                        <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
-                    </div>
-                    <div class="story-card" onclick="showStoryDetail('rumah-kecil')">
-                        <div style="font-size: 48px; margin-bottom: 12px;">🏠</div>
-                        <h3>Rumah Kecil</h3>
-                        <p>Cerita tentang keluarga yang bahagia</p>
-                        <div style="margin-top: 12px;">⭐⭐⭐⭐</div>
-                    </div>
-                    <div class="story-card" onclick="showStoryDetail('laut-biru')">
-                        <div style="font-size: 48px; margin-bottom: 12px;">🌊</div>
-                        <h3>Laut Biru</h3>
-                        <p>Menyelami keindahan dunia bawah laut</p>
-                        <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="categories">
-                <div class="category-card" onclick="showLibrary('hewan')">
-                    <div class="category-icon">🐾</div>
-                    <h3>Hewan</h3>
-                    <p>12 cerita</p>
-                </div>
-                <div class="category-card" onclick="showLibrary('petualangan')">
-                    <div class="category-icon">⛰️</div>
-                    <h3>Petualangan</h3>
-                    <p>8 cerita</p>
-                </div>
-                <div class="category-card" onclick="showLibrary('persahabatan')">
-                    <div class="category-icon">🤝</div>
-                    <h3>Persahabatan</h3>
-                    <p>15 cerita</p>
-                </div>
-                <div class="category-card" onclick="showLibrary('eksplorasi')">
-                    <div class="category-icon">🔍</div>
-                    <h3>Eksplorasi</h3>
-                    <p>10 cerita</p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin: 30px 0;">
-                <button class="btn" onclick="continueReading()">📖 Lanjutkan Cerita</button>
-                <button class="btn" onclick="showLibrary()">📚 Perpustakaan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Story Library -->
-    <div id="libraryPage" class="library-page">
-        <div class="container">
-            <div class="filters">
-                <h2>📚 Perpustakaan Cerita</h2>
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label class="filter-label">Rentang Usia</label>
-                        <select class="filter-select">
-                            <option>Semua Usia</option>
-                            <option>4-5 tahun</option>
-                            <option>5-6 tahun</option>
-                            <option>6-7 tahun</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Tema</label>
-                        <select class="filter-select">
-                            <option>Semua Tema</option>
-                            <option>Hewan</option>
-                            <option>Petualangan</option>
-                            <option>Persahabatan</option>
-                            <option>Eksplorasi</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Level Kosakata</label>
-                        <select class="filter-select">
-                            <option>Semua Level</option>
-                            <option>Pemula</option>
-                            <option>Menengah</option>
-                            <option>Lanjutan</option>
-                        </select>
-                    </div>
-                </div>
-                <input type="text" class="search-box" placeholder="Cari cerita...">
-            </div>
-
-            <div class="story-cards" id="storyGrid">
-                <!-- Stories will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Story Reader -->
-    <div id="readerPage" class="reader-page">
-        <div class="container">
-            <div class="reader-header">
-                <button class="btn" onclick="goBack()">← Kembali</button>
-                <h2 id="storyTitle">Petualangan di Hutan</h2>
-                <div>
-                    <button class="btn" onclick="toggleRecordMode()">🎤 Mode Rekam</button>
-                    <button class="btn" onclick="showActivities()">🎮 Aktivitas</button>
-                </div>
-            </div>
-
-            <div class="reader-content">
-                <div class="text-panel">
-                    <div class="story-text" id="storyText">
-                        Pada suatu hari yang <span class="word-highlight" onclick="showDefinition('cerah')">cerah</span>, 
-                        Kiki berjalan ke <span class="word-highlight" onclick="showDefinition('hutan')">hutan</span>. 
-                        Dia melihat <span class="word-highlight" onclick="showDefinition('kupu-kupu')">kupu-kupu</span> 
-                        yang cantik terbang di antara <span class="word-highlight" onclick="showDefinition('bunga')">bunga</span>-bunga.
-                    </div>
-                    
-                    <div class="audio-controls">
-                        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶️</button>
-                        <div class="audio-progress">
-                            <div class="audio-progress-fill" id="audioProgress"></div>
-                        </div>
-                        <span id="audioTime">0:00 / 2:30</span>
-                    </div>
-                </div>
-
-                <div class="illustration-panel">
-                    <div class="illustration" id="mainIllustration">🌳</div>
-                    <div class="hotspot" style="top: 30%; left: 20%;" onclick="showHotspot('kupu-kupu')">🦋</div>
-                    <div class="hotspot" style="top: 60%; left: 70%;" onclick="showHotspot('bunga')">🌸</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Activity Page -->
-    <div id="activityPage" class="activity-page">
-        <div class="container">
-            <div class="game-container">
-                <h2 class="game-title" id="gameTitle">🎯 Susun Kalimat</h2>
-                <p id="gameInstruction">Seret kata-kata ke tempat yang tepat!</p>
-                
-                <div class="game-progress">
-                    <div class="game-progress-fill" id="gameProgress"></div>
-                </div>
-
-                <div class="drag-drop-area" id="dropZone">
-                    <p style="color: #999;">Seret kata-kata ke sini</p>
-                </div>
-
-                <div class="word-pieces" id="wordPieces">
-                    <div class="word-piece" draggable="true">Kiki</div>
-                    <div class="word-piece" draggable="true">berjalan</div>
-                    <div class="word-piece" draggable="true">ke</div>
-                    <div class="word-piece" draggable="true">hutan</div>
-                </div>
-
-                <button class="btn" onclick="checkAnswer()" style="margin-top: 20px;">Periksa Jawaban</button>
-                <button class="btn" onclick="nextGame()">Permainan Berikutnya</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboardPage" class="dashboard-page">
-        <div class="container">
-            <h2 style="color: white; text-align: center; margin-bottom: 30px;">📊 Dashboard Progres</h2>
+    <header id="main-header" class="fixed top-0 left-0 w-full z-50 p-4 flex items-center justify-between transition-colors duration-300 bg-gradient-to-b from-black to-transparent">
+        <div class="flex items-center space-x-8">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1920px-Netflix_2015_logo.svg.png" 
+                 alt="Netflix Logo" class="h-6 md:h-8">
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">156</div>
-                    <div class="stat-label">Kata Dikuasai</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">23</div>
-                    <div class="stat-label">Cerita Selesai</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">45</div>
-                    <div class="stat-label">Menit Hari Ini</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">Level 2</div>
-                    <div class="stat-label">Penjelajah</div>
-                </div>
-            </div>
-
-            <div class="badge-collection">
-                <h3>🏆 Koleksi Lencana</h3>
-                <div class="badges-grid">
-                    <div class="badge">
-                        <div class="badge-icon">🐾</div>
-                        <div>Animal Expert</div>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon">📚</div>
-                        <div>Story Master</div>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon">🎯</div>
-                        <div>Perfect Score</div>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon">⭐</div>
-                        <div>First Story</div>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon">🏃</div>
-                        <div>Speed Reader</div>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon">🎤</div>
-                        <div>Voice Champion</div>
-                    </div>
-                </div>
-            </div>
+            <nav class="hidden md:flex space-x-6 text-sm">
+                <a href="#" class="text-white font-semibold hover:text-gray-300 transition-colors">Home</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">TV Shows</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">Movies</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">New & Popular</a>
+                <a href="#" class="text-gray-400 hover:text-gray-300 transition-colors">My List</a>
+            </nav>
         </div>
-    </div>
 
-    <!-- Recording Mode -->
-    <div id="recordMode" class="record-mode">
-        <div class="container">
-            <div class="game-container">
-                <h2 class="game-title">🎤 Mode Rekam & Ulangi</h2>
-                <p>Bacakan kalimat berikut dengan jelas:</p>
-                
-                <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                    <p style="font-size: 24px; color: #333; text-align: center;">
-                        "Kiki berjalan ke hutan yang hijau"
-                    </p>
-                </div>
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+                <input type="text" id="search-input" placeholder="Titles, people, genres" 
+                       class="bg-black border border-gray-600 text-white p-2 rounded-md text-sm outline-none focus:border-white">
+                <button id="search-button" class="text-white hover:text-gray-300 transition-colors p-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+            </div>
+            
+            <span class="text-sm hidden md:block">Kids</span>
+            <button class="text-white hover:text-gray-300 transition-colors">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            </button>
+            <img src="https://wallpapers.com/images/high/netflix-profile-pictures-1000-x-1000-880y9m50q5ufu2ow.webp" 
+                 alt="Profile" class="h-8 w-8 rounded cursor-pointer ring-2 ring-transparent hover:ring-white transition-all">
+        </div>
+    </header>
 
-                <div class="mic-container">
-                    <button class="mic-btn" id="micBtn" onclick="toggleRecording()">🎤</button>
-                    <p id="recordStatus">Tekan untuk mulai merekam</p>
-                </div>
-
-                <div class="recording-wave" id="recordingWave" style="display: none;">
-                    <div class="wave-bar" style="animation-delay: 0s; height: 20px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.1s; height: 30px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.2s; height: 25px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.3s; height: 35px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.4s; height: 20px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.5s; height: 40px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.6s; height: 30px;"></div>
-                    <div class="wave-bar" style="animation-delay: 0.7s; height: 25px;"></div>
-                </div>
-
-                <div class="score-display" id="scoreDisplay" style="display: none;">
-                    ⭐⭐⭐
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button class="btn" onclick="playRecording()" style="display: none;" id="playbackBtn">▶️ Putar Rekaman</button>
-                    <button class="btn" onclick="compareWithNarrator()">🔄 Bandingkan dengan Narator</button>
-                    <button class="btn" onclick="nextSentence()">➡️ Kalimat Berikutnya</button>
-                </div>
+    <section id="hero-section" class="relative h-screen flex items-end pb-16 bg-cover bg-center" 
+             style="background-image: url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40ff-8d53-a39118bcabff/f80b2a59-195c-4f15-a7b3-c351f0ee3a85/ID-en-20240506-popsignuptwoweeks-perspective_alpha_website_large.jpg');">
+        
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+        
+        <div id="hero-content" class="relative z-10 p-8 md:p-16 max-w-2xl">
+            <img src="https://variety.com/wp-content/uploads/2021/06/Loki-TV.jpeg?w=1000&h=750&crop=1" alt="Loki Logo" class="h-16 md:h-24 mb-4 object-contain">
+            <h1 class="hidden text-4xl md:text-6xl font-bold mb-4">Loki</h1> 
+            <p class="text-base md:text-lg mb-6 leading-relaxed text-shadow-md">
+                Petualangan God of Mischief Loki berlanjut setelah ia melarikan diri dengan Tesseract di Avengers: Endgame,
+                menemukan dirinya di hadapan Otoritas Variasi Waktu yang misterius.
+            </p>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <button id="play-button" class="flex items-center justify-center bg-white text-black px-6 py-3 rounded-md font-semibold text-lg hover:bg-gray-200 transition-colors shadow-lg">
+                    <svg class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg>
+                    Play
+                </button>
+                <button class="flex items-center justify-center bg-gray-700 text-white px-6 py-3 rounded-md font-semibold text-lg hover:bg-gray-600 transition-colors shadow-lg">
+                    <svg class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></svg>
+                    More Info
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Navigation Bar -->
-    <div class="nav-bar">
-        <button class="nav-btn active" onclick="showHome()">
-            <div class="nav-icon">🏠</div>
-            <div>Beranda</div>
-        </button>
-        <button class="nav-btn" onclick="showLibrary()">
-            <div class="nav-icon">📚</div>
-            <div>Perpustakaan</div>
-        </button>
-        <button class="nav-btn" onclick="continueReading()">
-            <div class="nav-icon">📖</div>
-            <div>Baca</div>
-        </button>
-        <button class="nav-btn" onclick="showActivities()">
-            <div class="nav-icon">🎮</div>
-            <div>Aktivitas</div>
-        </button>
-        <button class="nav-btn" onclick="showDashboard()">
-            <div class="nav-icon">📊</div>
-            <div>Progres</div>
-        </button>
-    </div>
+        <div id="trailer-container" class="absolute inset-0 z-0 hidden">
+            <iframe id="hero-iframe"
+                src="https://www.youtube.com/embed/nW948Va-l10?autoplay=0&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=nW948Va-l10" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media" 
+                allowfullscreen 
+                class="w-full h-full object-cover">
+            </iframe>
+            <button id="back-to-hero-button" class="absolute top-4 left-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-20">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </section>
 
-    <!-- Modal for definitions -->
-    <div class="modal" id="definitionModal">
-        <div class="modal-content">
-            <h3 id="wordTitle">Kata</h3>
-            <div id="wordDefinition">Definisi kata</div>
-            <div style="margin: 20px 0;">
-                <button class="btn" onclick="playWordAudio()">🔊 Dengar</button>
+    <main class="relative z-20 -mt-24 md:-mt-32 pb-16">
+        <section class="mb-8 px-4 md:px-8">
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 cursor-pointer hover:text-gray-300">Trending Now <span class="text-sm ml-2 text-gray-400">></span></h2>
+            <div class="relative group">
+                <div id="row-trending" class="flex overflow-x-scroll no-scrollbar scroll-snap-x space-x-2 md:space-x-4 pb-4">
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Loki Season 2" 
+                         data-description="Petualangan God of Mischief Loki berlanjut setelah ia melarikan diri dengan Tesseract di Avengers: Endgame, menemukan dirinya di hadapan Otoritas Variasi Waktu yang misterius."
+                         data-rating="8.5"
+                         data-year="2023"
+                         data-genres="Sci-Fi, Fantasy"
+                         data-trailer-url="https://www.youtube.com/embed/nW948Va-l10?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=nW948Va-l10">
+                        <img src="https://image.tmdb.org/t/p/w500/rMvTnWoCuyeadqzGpsxkSygfhlJ.jpg" alt="Loki Season 2" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.5/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Squid Game" 
+                         data-description="Ratusan orang yang terlilit utang diundang untuk memainkan permainan anak-anak dengan taruhan tinggi, namun konsekuensinya mematikan."
+                         data-rating="9.1"
+                         data-year="2021"
+                         data-genres="Thriller, Drama"
+                         data-trailer-url="https://www.youtube.com/embed/SWp5D_fB24I?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=SWp5D_fB24I">
+                        <img src="https://image.tmdb.org/t/p/w500/uJSS08R69C9b0Yy49aN7LwP0vWJ.jpg" alt="Squid Game" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 9.1/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Sweet Home" 
+                         data-description="Monster tiba-tiba muncul dan menyerang umat manusia, membuat mereka yang tersisa bersembunyi di apartemen mereka."
+                         data-rating="7.7"
+                         data-year="2020"
+                         data-genres="Horror, Sci-Fi"
+                         data-trailer-url="https://www.youtube.com/embed/zM4_o-L4i7o?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=zM4_o-L4i7o">
+                        <img src="https://image.tmdb.org/t/p/w500/n5wzLhN0Y7z0mG0J6C5B3A7x9V0.jpg" alt="Sweet Home" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 7.7/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="All of Us Are Dead" 
+                         data-description="Para siswa terjebak di sekolah dan harus melawan para zombie yang berubah menjadi virus, dengan bahaya dari luar."
+                         data-rating="7.4"
+                         data-year="2022"
+                         data-genres="Horror, Action"
+                         data-trailer-url="https://www.youtube.com/embed/hJ8byC4933g?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=hJ8byC4933g">
+                        <img src="https://image.tmdb.org/t/p/w500/oBIQDKDbgzGfKXrHp3Jb3K8z9w.jpg" alt="All of Us Are Dead" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 7.4/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Extraction 2" 
+                         data-description="Setelah selamat dari kematian, Tyler Rake kembali untuk misi lain: menyelamatkan keluarga gangster Georgia dari penjara tempat mereka ditahan."
+                         data-rating="7.0"
+                         data-year="2023"
+                         data-genres="Action, Thriller"
+                         data-trailer-url="https://www.youtube.com/embed/Y2KxI9z8aX8?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=Y2KxI9z8aX8">
+                        <img src="https://image.tmdb.org/t/p/w500/jR8C5F60xZ5z9D85S1z6T6X4XkX.jpg" alt="Extraction 2" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 7.0/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Stranger Things" 
+                         data-description="Sekelompok teman muda menyaksikan kekuatan supernatural dan petualangan rahasia pemerintah. Mereka akan mencari cara untuk menyelamatkan kota mereka."
+                         data-rating="8.7"
+                         data-year="2016"
+                         data-genres="Sci-Fi, Horror"
+                         data-trailer-url="https://www.youtube.com/embed/mnd7s5cPN1Q?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=mnd7s5cPN1Q">
+                        <img src="https://image.tmdb.org/t/p/w500/s9D8M5R9ZgD8V3Q6X7X8X6X8Z.jpg" alt="Stranger Things" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.7/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Money Heist" 
+                         data-description="Delapan pencuri menyandera dan mengunci diri di Royal Mint Spanyol sementara seorang jenius kriminal memanipulasi polisi untuk melaksanakan rencana pencuriannya."
+                         data-rating="8.3"
+                         data-year="2017"
+                         data-genres="Crime, Thriller"
+                         data-trailer-url="https://www.youtube.com/embed/_InqQJRqGW4?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=_InqQJRqGW4">
+                        <img src="https://image.tmdb.org/t/p/w500/pD7WzQ6l8L5q5x9b3K1z9S1x5W7.jpg" alt="Money Heist" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.3/10</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="scrollRow('row-trending', -400)" class="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-r-md hidden group-hover:block transition-opacity duration-300">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="scrollRow('row-trending', 400)" class="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-l-md hidden group-hover:block transition-opacity duration-300">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
             </div>
-            <button class="btn" onclick="closeModal()">Tutup</button>
-        </div>
-    </div>
+        </section>
 
-    <!-- Modal for game feedback -->
-    <div class="modal" id="gameFeedbackModal">
-        <div class="modal-content">
-            <h3 id="feedbackTitle">Hasil</h3>
-            <div id="feedbackMessage"></div>
-            <button class="btn" onclick="closeFeedbackModal()">Tutup</button>
-        </div>
-    </div>
+        <section class="mb-8 px-4 md:px-8">
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 cursor-pointer hover:text-gray-300">New Releases <span class="text-sm ml-2 text-gray-400">></span></h2>
+            <div class="relative group">
+                <div id="row-new-releases" class="flex overflow-x-scroll no-scrollbar scroll-snap-x space-x-2 md:space-x-4 pb-4">
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Dune: Part Two" 
+                         data-description="Paul Atreides bersatu dengan Chani dan Fremen saat dia berada di jalur balas dendam terhadap orang-orang yang menghancurkan keluarganya."
+                         data-rating="8.4"
+                         data-year="2024"
+                         data-genres="Sci-Fi, Adventure"
+                         data-trailer-url="https://www.youtube.com/embed/Way9Dexny3w?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=Way9Dexny3w">
+                        <img src="https://image.tmdb.org/t/p/w500/6KErczBLQY6azBLdLr5fH3NnK6b.jpg" alt="Dune: Part Two" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.4/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Godzilla Minus One" 
+                         data-description="Setelah kekalahan Jepang pasca-perang, ancaman baru muncul dalam bentuk Godzilla, mendorong Jepang ke kehancuran."
+                         data-rating="8.4"
+                         data-year="2023"
+                         data-genres="Sci-Fi, Action"
+                         data-trailer-url="https://www.youtube.com/embed/jB5kR75s5N4?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=jB5kR75s5N4">
+                        <img src="https://image.tmdb.org/t/p/w500/pDynekxWp5zS4X4X7F3z5C8Y8S1.jpg" alt="Godzilla Minus One" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.4/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Oppenheimer" 
+                         data-description="Kisah di balik pengembangan bom atom oleh J. Robert Oppenheimer selama Perang Dunia II."
+                         data-rating="8.6"
+                         data-year="2023"
+                         data-genres="Drama, History"
+                         data-trailer-url="https://www.youtube.com/embed/bK6ldnjE0Y8?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=bK6ldnjE0Y8">
+                        <img src="https://image.tmdb.org/t/p/w500/rMvTnWoCuyeadqzGpsxkSygfhlJ.jpg" alt="Oppenheimer" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 8.6/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Leo" 
+                         data-description="Komedi musikal animasi tentang seekor kadal peliharaan yang bosan dengan hidupnya dan memutuskan untuk melarikan diri."
+                         data-rating="7.0"
+                         data-year="2023"
+                         data-genres="Animation, Comedy"
+                         data-trailer-url="https://www.youtube.com/embed/nO_mB8-Y_1Y?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=nO_mB8-Y_1Y">
+                        <img src="https://image.tmdb.org/t/p/w500/uJSS08R69C9b0Yy49aN7LwP0vWJ.jpg" alt="Leo" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 7.0/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Rebel Moon" 
+                         data-description="Ketika pasukan tiran mengancam pemukiman yang damai di sebuah koloni, seorang wanita misterius menjadi harapan terakhir mereka untuk bertahan hidup."
+                         data-rating="5.5"
+                         data-year="2023"
+                         data-genres="Sci-Fi, Action"
+                         data-trailer-url="https://www.youtube.com/embed/P6yM_E_JvB4?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=P6yM_E_JvB4">
+                        <img src="https://image.tmdb.org/t/p/w500/n5wzLhN0Y7z0mG0J6C5B3A7x9V0.jpg" alt="Rebel Moon" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 5.5/10</p>
+                        </div>
+                    </div>
+                    <div class="movie-card w-40 md:w-56 flex-shrink-0 cursor-pointer relative rounded-lg overflow-hidden"
+                         data-title="Wonka" 
+                         data-description="Kisah Willy Wonka muda sebelum ia menjadi pemilik pabrik cokelat yang terkenal di dunia."
+                         data-rating="7.2"
+                         data-year="2023"
+                         data-genres="Fantasy, Comedy"
+                         data-trailer-url="https://www.youtube.com/embed/ot_mB8-Y_1P?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=ot_mB8-Y_1P">
+                        <img src="https://image.tmdb.org/t/p/w500/oBIQDKDbgzGfKXrHp3Jb3K8z9w.jpg" alt="Wonka" class="rounded-lg shadow-lg">
+                        <div class="movie-overlay">
+                            <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200">
+                                <svg class="h-4 w-4 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                            </button>
+                            <p class="text-xs mt-2 text-center hidden md:block">Rating: 7.2/10</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="scrollRow('row-new-releases', -400)" class="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-r-md hidden group-hover:block transition-opacity duration-300">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button onclick="scrollRow('row-new-releases', 400)" class="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-l-md hidden group-hover:block transition-opacity duration-300">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </section>
+        
+        <section id="search-results-section" class="mb-8 px-4 md:px-8 hidden">
+            <h2 class="text-xl md:text-2xl font-semibold mb-4">Search Results for: "<span id="search-query-display"></span>"</h2>
+            <div id="search-results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-4">
+                </div>
+            <p id="no-results-message" class="text-gray-400 text-center hidden">No results found.</p>
+        </section>
+    </main>
 
-    <!-- Tooltip -->
-    <div class="tooltip" id="tooltip"></div>
+    <div id="movie-detail-popup" class="movie-detail-popup fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+        <div class="thumbnail-video">
+            <img id="popup-thumbnail" src="" alt="Movie Thumbnail" class="object-cover">
+            <iframe id="popup-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen class="hidden"></iframe>
+            <button id="popup-play-button" class="absolute inset-0 flex items-center justify-center text-white text-6xl opacity-80 hover:opacity-100 transition-opacity">
+                <svg class="h-16 w-16" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg>
+            </button>
+        </div>
+        <div class="p-4">
+            <h3 id="popup-title" class="text-2xl font-bold mb-2"></h3>
+            <p class="text-sm text-gray-400 mb-2">
+                <span id="popup-year"></span> | 
+                <span id="popup-rating" class="inline-flex items-center">
+                    <svg class="h-4 w-4 mr-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z"></path></svg>
+                    <span class="font-bold"></span>
+                </span> | 
+                <span id="popup-genres"></span>
+            </p>
+            <p id="popup-description" class="text-sm text-gray-300 leading-relaxed mb-4"></p>
+            <div class="flex space-x-2">
+                <button class="flex items-center bg-white text-black px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-200">
+                    <svg class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg> Play
+                </button>
+                <button class="flex items-center bg-gray-700 text-white px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-600">
+                    <svg class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></svg> Info
+                </button>
+            </div>
+        </div>
+        <button id="popup-close-button" class="absolute top-2 right-2 bg-black/70 text-white p-2 rounded-full hover:bg-black/90 transition-colors">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+    <div id="overlay" class="fixed inset-0 bg-black/70 z-40 hidden"></div>
+
+    <footer class="p-8 text-center text-gray-500 text-sm">
+        <p>© 2025 Netflix Clone by YourName. All rights reserved.</p>
+        <p>This is a demonstration project and not affiliated with Netflix, Inc.</p>
+    </footer>
 
     <script>
-        // Global state
-        let currentPage = 'splash';
-        let isPlaying = false;
-        let isRecording = false;
-        let audioProgress = 0;
-        let gameProgress = 0;
-        let currentStory = null;
-        let currentGameType = 'sentence'; // Track current game type: 'sentence' or 'matching'
-        let userProfile = {
-            name: 'Sari',
-            level: 2,
-            wordsLearned: 156,
-            storiesCompleted: 23,
-            badges: ['Animal Expert', 'Story Master', 'Perfect Score', 'First Story', 'Speed Reader', 'Voice Champion']
-        };
+        // ----------------------------------------------------
+        // Global Variables
+        // ----------------------------------------------------
+        const header = document.getElementById('main-header');
+        const playButtonHero = document.getElementById('play-button');
+        const heroSection = document.getElementById('hero-section');
+        const heroContent = document.getElementById('hero-content');
+        const trailerContainer = document.getElementById('trailer-container');
+        const backToHeroButton = document.getElementById('back-to-hero-button');
+        const heroIframe = document.getElementById('hero-iframe');
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const movieCards = document.querySelectorAll('.movie-card');
+        const movieDetailPopup = document.getElementById('movie-detail-popup');
+        const popupCloseButton = document.getElementById('popup-close-button');
+        const overlay = document.getElementById('overlay');
+        const searchResultsSection = document.getElementById('search-results-section');
+        const searchResultsGrid = document.getElementById('search-results-grid');
+        const searchQueryDisplay = document.getElementById('search-query-display');
+        const noResultsMessage = document.getElementById('no-results-message');
 
-        // Story data
-        const stories = {
-            'petualangan-hutan': {
-                title: 'Petualangan di Hutan',
-                content: 'Pada suatu hari yang cerah, Kiki berjalan ke hutan. Dia melihat kupu-kupu yang cantik terbang di antara bunga-bunga.',
-                illustration: '🌳',
-                words: ['cerah', 'hutan', 'kupu-kupu', 'bunga'],
-                hotspots: [
-                    { emoji: '🦋', word: 'kupu-kupu', position: { top: '30%', left: '20%' } },
-                    { emoji: '🌸', word: 'bunga', position: { top: '60%', left: '70%' } }
-                ]
-            },
-            'rumah-kecil': {
-                title: 'Rumah Kecil',
-                content: 'Di sebuah desa yang tenang, terdapat rumah kecil berwarna kuning. Keluarga bahagia tinggal di sana.',
-                illustration: '🏠',
-                words: ['desa', 'rumah', 'kuning', 'keluarga'],
-                hotspots: []
-            },
-            'laut-biru': {
-                title: 'Laut Biru',
-                content: 'Ikan-ikan berenang di laut biru. Ada ikan badut, ikan pari, dan bintang laut yang indah.',
-                illustration: '🌊',
-                words: ['laut', 'berenang', 'badut', 'bintang'],
-                hotspots: []
-            }
-        };
-
-        // Word definitions
-        const definitions = {
-            'cerah': {
-                definition: 'Terang dan tidak mendung, seperti hari yang penuh sinar matahari',
-                example: 'Hari ini cuaca sangat cerah'
-            },
-            'hutan': {
-                definition: 'Tempat yang dipenuhi dengan banyak pohon dan tanaman',
-                example: 'Banyak binatang hidup di hutan'
-            },
-            'kupu-kupu': {
-                definition: 'Serangga cantik yang memiliki sayap berwarna-warni',
-                example: 'Kupu-kupu suka hinggap di bunga'
-            },
-            'bunga': {
-                definition: 'Bagian tanaman yang berwarna indah dan harum',
-                example: 'Bunga mawar sangat harum'
-            }
-        };
-
-        // Initialize app
-        function init() {
-            populateStoryLibrary();
-            setupDragAndDrop();
-            startProgressAnimation();
-        }
-
-        // Navigation functions
-        function showHome() {
-            hideAllPages();
-            document.getElementById('homePage').style.display = 'block';
-            updateNavigation('home');
-            currentPage = 'home';
-        }
-
-        function showLibrary(category = null) {
-            hideAllPages();
-            document.getElementById('libraryPage').style.display = 'block';
-            updateNavigation('library');
-            currentPage = 'library';
-            if (category) {
-                filterStoriesByCategory(category);
-            }
-        }
-
-        function showStoryDetail(storyId) {
-            currentStory = stories[storyId];
-            if (currentStory) {
-                showReader();
-            }
-        }
-
-        function showReader() {
-            hideAllPages();
-            document.getElementById('readerPage').style.display = 'block';
-            updateNavigation('reader');
-            currentPage = 'reader';
-            
-            if (currentStory) {
-                document.getElementById('storyTitle').textContent = currentStory.title;
-                document.getElementById('storyText').innerHTML = highlightWords(currentStory.content, currentStory.words);
-                document.getElementById('mainIllustration').textContent = currentStory.illustration;
-                setupHotspots();
-            }
-        }
-
-        function showActivities() {
-            hideAllPages();
-            document.getElementById('activityPage').style.display = 'block';
-            updateNavigation('activities');
-            currentPage = 'activities';
-            resetGame();
-        }
-
-        function showDashboard() {
-            hideAllPages();
-            document.getElementById('dashboardPage').style.display = 'block';
-            updateNavigation('dashboard');
-            currentPage = 'dashboard';
-        }
-
-        function showProfiles() {
-            playClickSound();
-            alert('Fitur pemilihan profil akan segera hadir!');
-        }
-
-        function continueReading() {
-            playClickSound();
-            showStoryDetail('petualangan-hutan');
-        }
-
-        function toggleRecordMode() {
-            hideAllPages();
-            document.getElementById('recordMode').style.display = 'block';
-            currentPage = 'record';
-        }
-
-        function goBack() {
-            playClickSound();
-            if (currentPage === 'reader' || currentPage === 'record') {
-                showHome();
+        // ----------------------------------------------------
+        // 1. Header Scroll Effect
+        // ----------------------------------------------------
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('bg-black', 'shadow-lg');
+                header.classList.remove('from-black', 'to-transparent');
             } else {
-                history.back();
+                header.classList.remove('bg-black', 'shadow-lg');
+                header.classList.add('from-black', 'to-transparent');
             }
-        }
+        });
 
-        function hideAllPages() {
-            const pages = ['splashScreen', 'homePage', 'libraryPage', 'readerPage', 'activityPage', 'dashboardPage', 'recordMode'];
-            pages.forEach(page => {
-                document.getElementById(page).style.display = 'none';
-            });
-            // Also hide modals
-            document.getElementById('definitionModal').style.display = 'none';
-            document.getElementById('gameFeedbackModal').style.display = 'none';
-        }
-
-        function updateNavigation(activePage) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            
-            const navMap = {
-                'home': 0,
-                'library': 1,
-                'reader': 2,
-                'activities': 3,
-                'dashboard': 4
-            };
-            
-            if (navMap[activePage] !== undefined) {
-                document.querySelectorAll('.nav-btn')[navMap[activePage]].classList.add('active');
-            }
-        }
-
-        // Story functions
-        function populateStoryLibrary() {
-            const storyGrid = document.getElementById('storyGrid');
-            storyGrid.innerHTML = '';
-            
-            Object.keys(stories).forEach(storyId => {
-                const story = stories[storyId];
-                const card = document.createElement('div');
-                card.className = 'story-card';
-                card.onclick = () => showStoryDetail(storyId);
-                
-                card.innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 12px;">${story.illustration}</div>
-                    <h3>${story.title}</h3>
-                    <p>${story.content.substring(0, 50)}...</p>
-                    <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
-                `;
-                
-                storyGrid.appendChild(card);
+        // ----------------------------------------------------
+        // 2. Movie Row Horizontal Scroll
+        // ----------------------------------------------------
+        function scrollRow(rowId, amount) {
+            const row = document.getElementById(rowId);
+            row.scrollBy({
+                left: amount,
+                behavior: 'smooth'
             });
         }
 
-        function highlightWords(text, words) {
-            let highlightedText = text;
-            words.forEach(word => {
-                const regex = new RegExp(`\\b${word}\\b`, 'gi');
-                highlightedText = highlightedText.replace(regex, 
-                    `<span class="word-highlight" onclick="showDefinition('${word}')">${word}</span>`);
-            });
-            return highlightedText;
-        }
-
-        function setupHotspots() {
-            const illustrationPanel = document.querySelector('.illustration-panel');
-            // Clear existing hotspots
-            illustrationPanel.querySelectorAll('.hotspot').forEach(el => el.remove());
-            
-            if (currentStory && currentStory.hotspots) {
-                currentStory.hotspots.forEach(hotspot => {
-                    const hotspotEl = document.createElement('div');
-                    hotspotEl.className = 'hotspot';
-                    hotspotEl.style.top = hotspot.position.top;
-                    hotspotEl.style.left = hotspot.position.left;
-                    hotspotEl.textContent = hotspot.emoji;
-                    hotspotEl.onclick = () => showHotspot(hotspot.word);
-                    illustrationPanel.appendChild(hotspotEl);
-                });
-            }
-        }
-
-        function showDefinition(word) {
-            playClickSound();
-            const definition = definitions[word];
-            if (definition) {
-                document.getElementById('wordTitle').textContent = word.charAt(0).toUpperCase() + word.slice(1);
-                document.getElementById('wordDefinition').innerHTML = `
-                    <p><strong>Arti:</strong> ${definition.definition}</p>
-                    <p><strong>Contoh:</strong> ${definition.example}</p>
-                `;
-                document.getElementById('definitionModal').style.display = 'flex';
-            }
-        }
-
-        function showHotspot(word) {
-            playClickSound();
-            showTooltip(word, event.target);
-            setTimeout(() => hideTooltip(), 2000);
-        }
-
-        function closeModal() {
-            playClickSound();
-            document.getElementById('definitionModal').style.display = 'none';
-        }
-
-        function closeFeedbackModal() {
-            playClickSound();
-            document.getElementById('gameFeedbackModal').style.display = 'none';
-        }
-
-        // Audio functions
-        function toggleAudio() {
-            playClickSound();
-            isPlaying = !isPlaying;
-            const playBtn = document.getElementById('playBtn');
-            
-            if (isPlaying) {
-                playBtn.textContent = '⏸️';
-                startAudioProgress();
-                highlightCurrentWord();
+        // ----------------------------------------------------
+        // 3. Hero Section Trailer Playback
+        // ----------------------------------------------------
+        playButtonHero.addEventListener('click', () => {
+            heroContent.classList.add('hidden');
+            trailerContainer.classList.remove('hidden');
+            // Pastikan autoplay aktif
+            const currentSrc = heroIframe.src;
+            if (!currentSrc.includes('autoplay=1')) {
+                heroIframe.src = currentSrc + '&autoplay=1';
             } else {
-                playBtn.textContent = '▶️';
-                stopAudioProgress();
+                heroIframe.src = currentSrc.replace('autoplay=0', 'autoplay=1'); // fallback if already has autoplay=0
             }
-        }
+            heroSection.style.backgroundImage = 'none'; // Remove background image
+        });
 
-        function startAudioProgress() {
-            const progressBar = document.getElementById('audioProgress');
-            const timeDisplay = document.getElementById('audioTime');
-            let progress = 0;
-            
-            const interval = setInterval(() => {
-                if (!isPlaying) {
-                    clearInterval(interval);
-                    return;
+        backToHeroButton.addEventListener('click', () => {
+            trailerContainer.classList.add('hidden');
+            heroContent.classList.remove('hidden');
+            // Stop video by resetting src
+            const currentSrc = heroIframe.src;
+            heroIframe.src = currentSrc.replace('autoplay=1', 'autoplay=0'); // Stop autoplay
+            heroSection.style.backgroundImage = "url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40ff-8d53-a39118bcabff/f80b2a59-195c-4f15-a7b3-c351f0ee3a85/ID-en-20240506-popsignuptwoweeks-perspective_alpha_website_large.jpg')";
+        });
+
+        // ----------------------------------------------------
+        // 4. Movie Card Hover Effects (Video Preview & Detail Pop-up)
+        // ----------------------------------------------------
+        let popupTimeout; // Untuk menunda menampilkan pop-up
+        let currentPlayingIframe = null; // Melacak iframe yang sedang diputar
+
+        movieCards.forEach(card => {
+            const popupThumbnail = movieDetailPopup.querySelector('#popup-thumbnail');
+            const popupIframe = movieDetailPopup.querySelector('#popup-iframe');
+            const popupPlayButton = movieDetailPopup.querySelector('#popup-play-button');
+
+            // Data diambil dari data- attributes
+            const movieTitle = card.dataset.title;
+            const movieDescription = card.dataset.description;
+            const movieRating = card.dataset.rating;
+            const movieYear = card.dataset.year;
+            const movieGenres = card.dataset.genres;
+            const movieTrailerUrl = card.dataset.trailerUrl;
+            const moviePoster = card.querySelector('img').src;
+
+
+            // Ketika mouse masuk (hover) ke movie card
+            card.addEventListener('mouseenter', (event) => {
+                // Clear any existing timeout
+                clearTimeout(popupTimeout);
+
+                // Dapatkan posisi kartu untuk menempatkan pop-up
+                const cardRect = card.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const popupWidth = 320; // Sesuaikan dengan lebar pop-up di CSS
+
+                // Hitung posisi horizontal pop-up agar tidak keluar layar
+                let popupLeft = cardRect.left + (cardRect.width / 2) - (popupWidth / 2);
+                if (popupLeft < 10) { // Jika terlalu kiri
+                    popupLeft = 10;
+                } else if (popupLeft + popupWidth > viewportWidth - 10) { // Jika terlalu kanan
+                    popupLeft = viewportWidth - popupWidth - 10;
                 }
                 
-                progress += 1;
-                const percentage = (progress / 150) * 100; // 150 = 2.5 minutes in seconds
-                progressBar.style.width = percentage + '%';
-                
-                const minutes = Math.floor(progress / 60);
-                const seconds = progress % 60;
-                timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} / 2:30`;
-                
-                if (progress >= 150) {
-                    clearInterval(interval);
-                    isPlaying = false;
-                    document.getElementById('playBtn').textContent = '▶';
-                    showActivities();
-                }
-            }, 100); // Faster for demo
-        }
+                // Set posisi pop-up
+                movieDetailPopup.style.top = `${cardRect.top + window.scrollY - 20}px`; // Sedikit di atas kartu
+                movieDetailPopup.style.left = `${popupLeft}px`;
 
-        function stopAudioProgress() {
-            // Audio progress stops automatically when isPlaying becomes false
-        }
+                // Isi detail pop-up
+                movieDetailPopup.querySelector('#popup-title').textContent = movieTitle;
+                movieDetailPopup.querySelector('#popup-description').textContent = movieDescription;
+                movieDetailPopup.querySelector('#popup-rating span:last-child').textContent = movieRating + '/10';
+                movieDetailPopup.querySelector('#popup-year').textContent = movieYear;
+                movieDetailPopup.querySelector('#popup-genres').textContent = movieGenres;
+                popupThumbnail.src = moviePoster; // Set gambar thumbnail pop-up
+                
+                // Reset iframe
+                popupIframe.src = '';
+                popupIframe.classList.add('hidden');
+                popupThumbnail.classList.remove('hidden');
+                popupPlayButton.classList.remove('hidden');
 
-        function highlightCurrentWord() {
-            if (!isPlaying) return;
-            
-            const words = document.querySelectorAll('.word-highlight');
-            let currentIndex = 0;
-            
-            const interval = setInterval(() => {
-                if (!isPlaying || currentIndex >= words.length) {
-                    clearInterval(interval);
-                    return;
-                }
-                
-                // Remove previous highlights
-                words.forEach(word => word.classList.remove('highlighted'));
-                
-                // Add current highlight
-                if (words[currentIndex]) {
-                    words[currentIndex].classList.add('highlighted');
-                }
-                
-                currentIndex++;
-            }, 2000);
-        }
+                // Tunda menampilkan pop-up dan memulai video
+                popupTimeout = setTimeout(() => {
+                    movieDetailPopup.classList.add('show');
+                    overlay.classList.remove('hidden'); // Tampilkan overlay
+                    // Otomatis putar video di pop-up setelah muncul
+                    if (movieTrailerUrl) {
+                        popupIframe.src = movieTrailerUrl;
+                        popupIframe.classList.remove('hidden');
+                        popupThumbnail.classList.add('hidden');
+                        popupPlayButton.classList.add('hidden');
+                        currentPlayingIframe = popupIframe;
+                    }
+                }, 500); // Tunda 500ms
 
-        function playWordAudio() {
-            playClickSound();
-            // Simulate word pronunciation
-            setTimeout(() => {
-                playSuccessSound();
-            }, 500);
-        }
+                // Event listener untuk tombol play di pop-up thumbnail (jika video tidak autoplay)
+                popupPlayButton.onclick = () => {
+                    if (movieTrailerUrl) {
+                        popupIframe.src = movieTrailerUrl;
+                        popupIframe.classList.remove('hidden');
+                        popupThumbnail.classList.add('hidden');
+                        popupPlayButton.classList.add('hidden');
+                        currentPlayingIframe = popupIframe;
+                    }
+                };
+            });
 
-        // Recording functions
-        function toggleRecording() {
-            playClickSound();
-            isRecording = !isRecording;
-            const micBtn = document.getElementById('micBtn');
-            const recordStatus = document.getElementById('recordStatus');
-            const recordingWave = document.getElementById('recordingWave');
-            
-            if (isRecording) {
-                micBtn.classList.add('recording');
-                micBtn.textContent = '⏹️';
-                recordStatus.textContent = 'Sedang merekam... Tekan untuk berhenti';
-                recordingWave.style.display = 'flex';
-                
-                // Simulate recording for 3 seconds
+            // Ketika mouse meninggalkan movie card atau pop-up detail
+            card.addEventListener('mouseleave', () => {
+                clearTimeout(popupTimeout); // Hapus timeout jika mouse keluar sebelum pop-up muncul
+                // Sembunyikan pop-up jika mouse keluar dari kartu
+                // Menunda sedikit untuk memberikan waktu mouse bergerak ke pop-up jika ingin berinteraksi
                 setTimeout(() => {
-                    if (isRecording) {
-                        toggleRecording();
-                        showRecordingResult();
+                    if (!movieDetailPopup.matches(':hover')) { // Hanya sembunyikan jika mouse tidak di atas pop-up
+                        movieDetailPopup.classList.remove('show');
+                        overlay.classList.add('hidden'); // Sembunyikan overlay
+                        // Stop video di pop-up jika ada
+                        if (currentPlayingIframe) {
+                            currentPlayingIframe.src = currentPlayingIframe.src.replace('autoplay=1', 'autoplay=0'); // Stop autoplay
+                            currentPlayingIframe = null;
+                        }
                     }
-                }, 3000);
-            } else {
-                micBtn.classList.remove('recording');
-                micBtn.textContent = '🎤';
-                recordStatus.textContent = 'Tekan untuk mulai merekam';
-                recordingWave.style.display = 'none';
-            }
-        }
-
-        function showRecordingResult() {
-            const scoreDisplay = document.getElementById('scoreDisplay');
-            const playbackBtn = document.getElementById('playbackBtn');
-            
-            // Simulate scoring
-            const score = Math.floor(Math.random() * 3) + 1; // 1-3 stars
-            let stars = '';
-            for (let i = 0; i < score; i++) {
-                stars += '⭐';
-            }
-            
-            scoreDisplay.textContent = stars;
-            scoreDisplay.style.display = 'block';
-            playbackBtn.style.display = 'inline-block';
-            
-            playSuccessSound();
-            if (score === 3) {
-                createConfetti();
-            }
-        }
-
-        function playRecording() {
-            playClickSound();
-            // Simulate playback
-            setTimeout(() => {
-                alert('Rekaman Anda: "Kiki berjalan ke hutan yang hijau"');
-            }, 500);
-        }
-
-        function compareWithNarrator() {
-            playClickSound();
-            alert('Perbandingan dengan narator: Pengucapan Anda 85% mirip!');
-        }
-
-        function nextSentence() {
-            playClickSound();
-            alert('Kalimat berikutnya: "Dia melihat kupu-kupu yang cantik"');
-        }
-
-        // Game functions
-        function setupDragAndDrop() {
-            const wordPieces = document.getElementById('wordPieces');
-            const dropZone = document.getElementById('dropZone');
-            
-            if (!wordPieces || !dropZone) return;
-            
-            // Add drag event listeners
-            wordPieces.addEventListener('dragstart', handleDragStart);
-            wordPieces.addEventListener('dragend', handleDragEnd);
-            
-            dropZone.addEventListener('dragover', handleDragOver);
-            dropZone.addEventListener('drop', handleDrop);
-        }
-
-        function handleDragStart(e) {
-            if (e.target.classList.contains('word-piece')) {
-                e.target.classList.add('dragging');
-                e.dataTransfer.setData('text/plain', e.target.textContent);
-            }
-        }
-
-        function handleDragEnd(e) {
-            if (e.target.classList.contains('word-piece')) {
-                e.target.classList.remove('dragging');
-            }
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const wordText = e.dataTransfer.getData('text/plain');
-            const dropZone = document.getElementById('dropZone');
-            
-            // Create dropped word element
-            const droppedWord = document.createElement('span');
-            droppedWord.textContent = wordText + ' ';
-            droppedWord.style.background = '#8BC34A';
-            droppedWord.style.color = 'white';
-            droppedWord.style.padding = '4px 8px';
-            droppedWord.style.borderRadius = '4px';
-            droppedWord.style.margin = '2px';
-            droppedWord.style.display = 'inline-block';
-            
-            if (currentGameType === 'sentence') {
-                if (dropZone.querySelector('p')) {
-                    dropZone.querySelector('p').remove();
-                }
-                dropZone.appendChild(droppedWord);
-            } else if (currentGameType === 'matching') {
-                const imageCard = e.target.closest('div');
-                if (imageCard && imageCard.parentElement === dropZone.querySelector('div')) {
-                    // Check if the image card already has a word
-                    if (!imageCard.querySelector('span')) {
-                        imageCard.appendChild(droppedWord);
-                    }
-                }
-            }
-            
-            // Remove the dragged piece
-            const pieces = document.querySelectorAll('.word-piece');
-            pieces.forEach(piece => {
-                if (piece.textContent === wordText && piece.classList.contains('dragging')) {
-                    piece.remove();
-                }
+                }, 100); // Penundaan 100ms
             });
-            
-            updateGameProgress();
-            playClickSound();
-        }
+        });
 
-        function checkAnswer() {
-            playClickSound();
-            const dropZone = document.getElementById('dropZone');
-            
-            if (currentGameType === 'sentence') {
-                const droppedWords = Array.from(dropZone.children).map(el => el.textContent.trim());
-                const correctOrder = ['Kiki', 'berjalan', 'ke', 'hutan'];
-                
-                if (JSON.stringify(droppedWords) === JSON.stringify(correctOrder)) {
-                    showFeedbackModal('Hebat!', 'Kalimat Anda benar! 🎉');
-                    playSuccessSound();
-                    createConfetti();
-                    updateGameProgress(100);
-                } else {
-                    showFeedbackModal('Coba Lagi!', 'Susun kata-kata dengan urutan yang tepat.');
-                }
-            } else if (currentGameType === 'matching') {
-                const imageCards = dropZone.querySelectorAll('div > div');
-                const correctMatches = [
-                    { image: '🐱', word: 'kucing' },
-                    { image: '🐶', word: 'anjing' },
-                    { image: '🌸', word: 'bunga' },
-                    { image: '🌳', word: 'pohon' }
-                ];
-                let allCorrect = true;
-                
-                imageCards.forEach(card => {
-                    const image = card.textContent.trim().split(' ')[0];
-                    const word = card.querySelector('span') ? card.querySelector('span').textContent.trim() : '';
-                    const correctMatch = correctMatches.find(match => match.image === image);
-                    if (!correctMatch || correctMatch.word !== word) {
-                        allCorrect = false;
-                    }
-                });
-                
-                if (allCorrect && imageCards.length === correctMatches.length) {
-                    showFeedbackModal('Hebat!', 'Semua gambar dan kata cocok! 🎉');
-                    playSuccessSound();
-                    createConfetti();
-                    updateGameProgress(100);
-                } else {
-                    showFeedbackModal('Coba Lagi!', 'Pastikan semua kata cocok dengan gambar yang tepat.');
-                }
+        // Tutup pop-up jika klik tombol tutup
+        popupCloseButton.addEventListener('click', () => {
+            movieDetailPopup.classList.remove('show');
+            overlay.classList.add('hidden');
+            if (currentPlayingIframe) {
+                currentPlayingIframe.src = currentPlayingIframe.src.replace('autoplay=1', 'autoplay=0'); // Stop autoplay
+                currentPlayingIframe = null;
             }
-        }
+        });
 
-        function showFeedbackModal(title, message) {
-            document.getElementById('feedbackTitle').textContent = title;
-            document.getElementById('feedbackMessage').textContent = message;
-            document.getElementById('gameFeedbackModal').style.display = 'flex';
-        }
-
-        function nextGame() {
-            playClickSound();
-            resetGame();
-            currentGameType = 'matching';
-            document.getElementById('gameTitle').textContent = '🎯 Cocokkan Gambar';
-            document.getElementById('gameInstruction').textContent = 'Cocokkan gambar dengan kata yang tepat!';
-            
-            // Update game content for matching game
-            const dropZone = document.getElementById('dropZone');
-            const wordPieces = document.getElementById('wordPieces');
-            
-            dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
-            wordPieces.innerHTML = '';
-            
-            // Add matching game elements
-            const games = [
-                { image: '🐱', word: 'kucing' },
-                { image: '🐶', word: 'anjing' },
-                { image: '🌸', word: 'bunga' },
-                { image: '🌳', word: 'pohon' }
-            ];
-            
-            const gameGrid = dropZone.querySelector('div');
-            games.forEach(game => {
-                const imageCard = document.createElement('div');
-                imageCard.style.cssText = 'background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; font-size: 48px; border: 2px dashed #ddd;';
-                imageCard.textContent = game.image;
-                gameGrid.appendChild(imageCard);
-                
-                const wordCard = document.createElement('div');
-                wordCard.className = 'word-piece';
-                wordCard.textContent = game.word;
-                wordCard.draggable = true;
-                wordPieces.appendChild(wordCard);
-            });
-            
-            setupDragAndDrop();
-        }
-
-        function resetGame() {
-            gameProgress = 0;
-            updateGameProgress(0);
-            currentGameType = 'sentence';
-            document.getElementById('gameTitle').textContent = '🎯 Susun Kalimat';
-            document.getElementById('gameInstruction').textContent = 'Seret kata-kata ke tempat yang tepat!';
-            
-            const dropZone = document.getElementById('dropZone');
-            dropZone.innerHTML = '<p style="color: #999;">Seret kata-kata ke sini</p>';
-            
-            const wordPieces = document.getElementById('wordPieces');
-            wordPieces.innerHTML = `
-                <div class="word-piece" draggable="true">Kiki</div>
-                <div class="word-piece" draggable="true">berjalan</div>
-                <div class="word-piece" draggable="true">ke</div>
-                <div class="word-piece" draggable="true">hutan</div>
-            `;
-        }
-
-        function updateGameProgress(progress = null) {
-            if (progress !== null) {
-                gameProgress = progress;
-            } else {
-                gameProgress += 25; // Each word adds 25%
+        // Tutup pop-up jika klik overlay
+        overlay.addEventListener('click', () => {
+            movieDetailPopup.classList.remove('show');
+            overlay.classList.add('hidden');
+            if (currentPlayingIframe) {
+                currentPlayingIframe.src = currentPlayingIframe.src.replace('autoplay=1', 'autoplay=0'); // Stop autoplay
+                currentPlayingIframe = null;
             }
-            
-            const progressBar = document.getElementById('gameProgress');
-            if (progressBar) {
-                progressBar.style.width = gameProgress + '%';
+        });
+
+        // ----------------------------------------------------
+        // 5. Search Functionality
+        // ----------------------------------------------------
+        searchButton.addEventListener('click', () => {
+            searchInput.classList.toggle('expanded'); // Toggle lebar input
+            searchInput.focus(); // Fokus ke input saat diperluas
+            if (!searchInput.classList.contains('expanded')) { // Jika input dikontrakkan
+                performSearch(searchInput.value); // Lakukan pencarian saat input dikontrakkan (atau di-submit)
             }
-        }
+        });
 
-        // Utility functions
-        function showTooltip(text, target) {
-            const tooltip = document.getElementById('tooltip');
-            tooltip.textContent = text;
-            tooltip.classList.add('show');
-            
-            const rect = target.getBoundingClientRect();
-            tooltip.style.left = rect.left + 'px';
-            tooltip.style.top = (rect.top - 40) + 'px';
-        }
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                performSearch(searchInput.value);
+            }
+        });
 
-        function hideTooltip() {
-            document.getElementById('tooltip').classList.remove('show');
-        }
+        function performSearch(query) {
+            query = query.toLowerCase().trim();
+            if (query === '') {
+                searchResultsSection.classList.add('hidden');
+                return;
+            }
 
-        function createConfetti() {
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.backgroundColor = ['#FFD54F', '#8BC34A', '#81CFFE', '#F8BBD0', '#CE93D8'][Math.floor(Math.random() * 5)];
-                    confetti.style.animationDelay = Math.random() * 3 + 's';
-                    document.body.appendChild(confetti);
+            searchResultsGrid.innerHTML = ''; // Kosongkan hasil sebelumnya
+            noResultsMessage.classList.add('hidden'); // Sembunyikan pesan "tidak ada hasil"
+
+            let resultsFound = false;
+
+            // Dapatkan semua kartu film di halaman
+            const allMovieCards = document.querySelectorAll('.movie-card');
+
+            allMovieCards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                const description = card.dataset.description.toLowerCase();
+                const genres = card.dataset.genres.toLowerCase();
+
+                if (title.includes(query) || description.includes(query) || genres.includes(query)) {
+                    // Buat clone kartu film untuk hasil pencarian
+                    const clonedCard = card.cloneNode(true);
+                    clonedCard.classList.remove('w-40', 'md:w-56', 'flex-shrink-0', 'transform', 'hover:scale-105', 'transition-all', 'duration-300', 'ease-in-out', 'relative', 'rounded-lg', 'overflow-hidden');
+                    clonedCard.classList.add('w-full', 'h-auto', 'transform', 'hover:scale-105', 'transition-transform', 'duration-200', 'ease-in-out', 'rounded-lg', 'overflow-hidden'); // Sesuaikan ukuran untuk grid
+                    clonedCard.querySelector('.movie-overlay').classList.add('hidden'); // Sembunyikan overlay di hasil pencarian grid
                     
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, 3000);
-                }, i * 50);
-            }
-        }
-
-        function startProgressAnimation() {
-            // Animate progress bars on load
-            setTimeout(() => {
-                const progressBars = document.querySelectorAll('.progress-fill');
-                progressBars.forEach(bar => {
-                    bar.style.width = '65%';
-                });
-            }, 500);
-        }
-
-        function filterStoriesByCategory(category) {
-            // Filter stories by category (simplified for demo)
-            const allCards = document.querySelectorAll('#storyGrid .story-card');
-            allCards.forEach(card => {
-                card.style.display = 'block'; // Show all for demo
+                    // Hilangkan event listener mouseenter/mouseleave dari klon
+                    // Cara paling sederhana adalah membuat ulang elemen atau menghapus listener secara manual
+                    // Untuk demo, kita akan menyembunyikan overlay dan tidak mengaktifkan pop-up dari hasil pencarian
+                    searchResultsGrid.appendChild(clonedCard);
+                    resultsFound = true;
+                }
             });
-        }
 
-        // Sound effects (simulated)
-        function playClickSound() {
-            // In a real app, this would play an actual sound file
-            console.log('🔊 Click sound');
-        }
-
-        function playSuccessSound() {
-            // In a real app, this would play an actual success sound
-            console.log('🔊 Success sound');
-        }
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            init();
-            
-            // Show splash screen initially
-            setTimeout(() => {
-                // Auto-advance to home after 3 seconds for demo
-                // showHome();
-            }, 3000);
-        });
-
-        // Keyboard shortcuts for development
-        document.addEventListener('keydown', function(e) {
-            if (e.key === '1') showHome();
-            if (e.key === '2') showLibrary();
-            if (e.key === '3') continueReading();
-            if (e.key === '4') showActivities();
-            if (e.key === '5') showDashboard();
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            // Adjust layout for different screen sizes
-            const container = document.querySelector('.container');
-            if (window.innerWidth < 768) {
-                container.style.padding = '12px';
+            // Tampilkan atau sembunyikan section hasil pencarian
+            if (resultsFound) {
+                searchResultsSection.classList.remove('hidden');
+                document.querySelectorAll('main > section:not(#search-results-section)').forEach(section => {
+                    section.classList.add('hidden'); // Sembunyikan section film lainnya
+                });
             } else {
-                container.style.padding = '16px';
+                searchResultsSection.classList.remove('hidden');
+                noResultsMessage.classList.remove('hidden');
+                document.querySelectorAll('main > section:not(#search-results-section)').forEach(section => {
+                    section.classList.remove('hidden'); // Tampilkan kembali section film lainnya
+                });
             }
-        });
+
+            searchQueryDisplay.textContent = query;
+        }
     </script>
 </body>
 </html>

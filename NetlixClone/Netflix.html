@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    Instruksi:
+    1. Simpan file ini sebagai Netflix.html
+    2. Pastikan Netflix.css dan Netflix.js di folder yang sama
+    3. Buka Netflix.html di browser atau jalankan dengan Live Server
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Clone</title>
+  <link rel="stylesheet" href="Netflix.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">MyFlix</div>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#series">Series</a></li>
+        <li><a href="#movies">Movies</a></li>
+        <li><a href="#new">New & Popular</a></li>
+        <li><a href="#mylist">My List</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="home">
+    <h1>Featured Videos</h1>
+  </section>
+
+  <!-- SEARCH BAR -->
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search videos..." oninput="filterVideos()">
+  </div>
+
+  <!-- VIDEO GRID -->
+  <section class="video-grid" id="videos"></section>
+
+  <!-- MODAL PLAYER -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="close">&times;</span>
+      <video id="player" controls autoplay></video>
+    </div>
+  </div>
+
+  <script src="Netflix.js"></script>
+</body>
+</html>

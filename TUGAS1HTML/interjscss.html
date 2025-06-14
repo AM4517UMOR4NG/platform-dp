@@ -1283,14 +1283,14 @@
                 title: 'Petualangan di Hutan',
                 content: [
                     {
-                        text: 'Pada suatu hari yang <span class="word-highlight" onclick="showDefinition(\'cerah\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'cerah\')" role="button" tabindex="0" aria-label="Lihat definisi cerah">cerah</span>, Kiki berjalan ke <span class="word-highlight" onclick="showDefinition(\'hutan\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'hutan\')" role="button" tabindex="0" aria-label="Lihat definisi hutan">hutan</span>.',
+                        text: 'Pada suatu hari yang cerah, Kiki pergi ke hutan Lihat definisi hutan yang hijau.',
                         choices: [
                             { text: 'Ikuti kupu-kupu', next: 1 },
                             { text: 'Cari sungai', next: 2 }
                         ]
                     },
                     {
-                        text: 'Dia melihat <span class="word-highlight" onclick="showDefinition(\'kupu-kupu\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'kupu-kupu\')" role="button" tabindex="0" aria-label="Lihat definisi kupu-kupu">kupu-kupu</span> yang cantik terbang di antara <span class="word-highlight" onclick="showDefinition(\'bunga\')" onkeypress="e => e.key === \'Enter\' && showDefinition(\'bunga\')" role="button" tabindex="0" aria-label="Lihat definisi bunga">bunga</span>-bunga.',
+                        text: 'Dia melihat kupu-kupu. Lihat definisi kupu-kupu yang cantik terbang di bunga.',
                         choices: []
                     },
                     {
@@ -1468,29 +1468,21 @@
         };
 
         // Initialize app
-        function init() {
-            loadInitialData();
-            populateStoryLibrary();
-            setupDragAndDrop();
-            startProgressAnimation();
-            loadProfiles();
-            updateLeaderboard();
-            checkDailyGoals();
-            showNotification('Selamat datang kembali!');
-            updateLanguage();
-        }
 
         // Data Management
-        function loadInitialData() {
-            try {
-                state.users = JSON.parse(localStorage.getItem('users')) || [];
-                state.customStories = JSON.parse(localStorage.getItem('customStories')) || [];
-                state.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-            } catch (e) {
-                console.error('Failed to load from localStorage:', e);
-                showFeedbackModal('Error', 'Gagal memuat data. Silakan coba lagi.');
-            }
-        }
+   function loadInitialData() {
+    try {
+        state.users = JSON.parse(localStorage.getItem('users')) || [];
+        state.customStories = JSON.parse(localStorage.getItem('customStories')) || [];
+        state.leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    } catch (e) {
+        console.error('Failed to load from localStorage:', e);
+        showFeedbackModal('Error', 'Gagal memuat data. Silakan coba lagi.');
+        state.users = [];
+        state.customStories = [];
+        state.leaderboard = [];
+    }
+}
 
         function saveToStorage() {
             try {
@@ -1545,34 +1537,34 @@
         }
 
         function createProfile() {
-            const name = document.getElementById('profileName').value.trim();
-            const avatar = document.getElementById('profileAvatar').value;
-            if (!name) {
-                showFeedbackModal('Peringatan', 'Masukkan nama profil!');
-                return;
-            }
-            if (name.length > 50) {
-                showFeedbackModal('Peringatan', 'Nama terlalu panjang!');
-                return;
-            }
-            const newUser = {
-                id: state.users.length,
-                name: sanitize(name),
-                avatar,
-                level: 1,
-                wordsLearned: 0,
-                storiesCompleted: 0,
-                minutesToday: 0,
-                storyCoins: 100,
-                favorites: [],
-                notes: [],
-                badges: []
-            };
-            state.users.push(newUser);
-            saveToStorage();
-            selectProfile(state.users.length - 1);
-            showHome();
-        }
+    const name = document.getElementById('profileName').value.trim();
+    const avatar = document.getElementById('profileAvatar').value;
+    if (!name) {
+        showFeedbackModal('Peringatan', 'Masukkan nama profil!');
+        return;
+    }
+    if (name.length < 3 || name.length > 20) {
+        showFeedbackModal('Peringatan', 'Nama harus antara 3 dan 20 karakter!');
+        return;
+    }
+    const newUser = {
+        id: state.users.length,
+        name: sanitize(name),
+        avatar,
+        level: 1,
+        wordsLearned: 0,
+        storiesCompleted: 0,
+        minutesToday: 0,
+        storyCoins: 100,
+        favorites: [],
+        notes: [],
+        badges: []
+    };
+    state.users.push(newUser);
+    saveToStorage();
+    selectProfile(state.users.length - 1);
+    showHome();
+}
 
         function selectProfile(index) {
             state.currentUser = state.users[index];
@@ -1764,43 +1756,45 @@
 
         // Story Functions
         function populateStoryLibrary(page = 1) {
-            const storyGrid = document.getElementById('storyGrid');
-            storyGrid.innerHTML = '';
-            const allStories = [...Object.values(stories), ...state.customStories];
-            const ageFilter = document.getElementById('ageFilter').value;
-            const themeFilter = document.getElementById('themeFilter').value;
-            const levelFilter = document.getElementById('levelFilter').value;
-            const searchQuery = document.getElementById('searchBox').value.toLowerCase();
+    const storyGrid = document.getElementById('storyGrid');
+    if (!storyGrid) {
+        console.error('storyGrid element not found');
+        return;
+    }
+    storyGrid.innerHTML = '';
+    const allStories = [...Object.values(stories), ...state.customStories];
+    const ageFilter = document.getElementById('ageFilter').value;
+    const themeFilter = document.getElementById('themeFilter').value;
+    const levelFilter = document.getElementById('levelFilter').value;
+    const searchQuery = document.getElementById('searchBox').value.toLowerCase();
 
-            let filteredStories = allStories.filter(story => {
-                return (ageFilter === 'Semua Usia' || story.age === ageFilter) &&
-                       (themeFilter === 'Semua Tema' || story.category === themeFilter) &&
-                       (levelFilter === 'Semua Level' || story.level === levelFilter) &&
-                       (searchQuery === '' || story.title.toLowerCase().includes(searchQuery));
-            });
+    let filteredStories = allStories.filter(story => {
+        return (ageFilter === 'Semua Usia' || story.age === ageFilter) &&
+               (themeFilter === 'Semua Tema' || story.category === themeFilter) &&
+               (levelFilter === 'Semua Level' || story.level === levelFilter) &&
+               (searchQuery === '' || story.title.toLowerCase().includes(searchQuery));
+    });
 
-            const start = (page - 1) * 6;
-            const end = start + 6;
-            filteredStories.slice(start, end).forEach(story => {
-                const card = document.createElement('div');
-                card.className = 'story-card';
-                card.tabIndex = 0;
-                card.setAttribute('role', 'button');
-                card.setAttribute('aria-label', `Buka cerita ${story.title}`);
-                card.addEventListener('click', () => showStoryDetail(story.id));
-                card.addEventListener('keypress', (e) => e.key === 'Enter' && showStoryDetail(story.id));
-                card.innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(story.illustration)}</div>
-                    <h3>${sanitize(story.title)}</h3>
-                    <p>${sanitize(story.content[0].text.substring(0, 50))}...</p>
-                    <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
-                    <button class="btn" style="font-size: 16px; padding: 8px;" onclick="event.stopPropagation(); toggleFavorite('${story.id}')" onkeypress="e => e.key === 'Enter' && toggleFavorite('${story.id}')" role="button" aria-label="${state.favorites.includes(story.id) ? 'Hapus dari favorit' : 'Tambah ke favorit'}">${state.favorites.includes(story.id) ? '❤️' : '🤍'} ${translations[state.currentLanguage].favorite}</button>
-                `;
-                storyGrid.appendChild(card);
-            });
-
-            document.getElementById('loadMoreStories').style.display = end < filteredStories.length ? 'inline-block' : 'none';
-        }
+    const start = (page - 1) * 6;
+    const end = start + 6;
+    filteredStories.slice(start, end).forEach(story => {
+        const card = document.createElement('div');
+        card.className = 'story-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Buka cerita ${story.title}`);
+        card.addEventListener('click', () => showStoryDetail(story.id));
+        card.addEventListener('keypress', (e) => e.key === 'Enter' && showStoryDetail(story.id));
+        card.innerHTML = `
+            <div style="font-size: 48px; margin-bottom: 12px;">${sanitize(story.illustration)}</div>
+            <h3>${sanitize(story.title)}</h3>
+            <p>${sanitize(story.content[0].text.substring(0, 50))}...</p>
+            <div style="margin-top: 12px;">⭐⭐⭐⭐⭐</div>
+            <button class="btn" style="font-size: 16px; padding: 8px;" onclick="event.stopPropagation(); toggleFavorite('${story.id}')" onkeypress="e => e.key === 'Enter' && toggleFavorite('${story.id}')" role="button" aria-label="${state.favorites.includes(story.id) ? 'Hapus dari favorit' : 'Tambah ke favorit'}">${state.favorites.includes(story.id) ? '❤️' : '🤍'} ${translations[state.currentLanguage].favorite}</button>
+        `;
+        storyGrid.appendChild(card);
+    });
+}
 
         function loadMoreStories() {
             const currentPage = Math.floor(document.getElementById('storyGrid').children.length / 6) + 1;
@@ -2015,86 +2009,86 @@
 
         // Game Functions
         function resetGame() {
-            if (state.timerInterval) {
-                clearInterval(state.timerInterval);
-                document.getElementById('timerDisplay').style.display = 'none';
-            }
-            state.gameProgress = 0;
-            updateGameProgress(0);
-            const dropZone = document.getElementById('dropZone');
-            const wordPieces = document.getElementById('wordPieces');
-            const difficulty = document.getElementById('gameDifficulty').value;
+    if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        document.getElementById('timerDisplay').style.display = 'none';
+    }
+    state.gameProgress = 0;
+    updateGameProgress(0);
+    const dropZone = document.getElementById('dropZone');
+    const wordPieces = document.getElementById('wordPieces');
+    const difficulty = document.getElementById('gameDifficulty').value;
 
-            document.getElementById('gameTitle').textContent = {
-                sentence: '🎯 Susun Kalimat',
-                matching: '🎯 Cocokkan Gambar',
-                memory: '🎯 Permainan Memori',
-                spelling: '🎯 Ejaan Kata',
-                sequencing: '🎯 Urutan Cerita'
-            }[state.currentGameType];
+    document.getElementById('gameTitle').textContent = {
+        sentence: '🎯 Susun Kalimat',
+        matching: '🎯 Cocokkan Gambar',
+        memory: '🎯 Permainan Memori',
+        spelling: '🎯 Ejaan Kata',
+        sequencing: '🎯 Urutan Cerita'
+    }[state.currentGameType];
 
-            document.getElementById('gameInstruction').textContent = {
-                sentence: 'Seret kata-kata ke tempat yang tepat!',
-                matching: 'Cocokkan gambar dengan kata yang tepat!',
-                memory: 'Balik kartu untuk mencocokkan pasangan!',
-                spelling: 'Susun huruf untuk membentuk kata!',
-                sequencing: 'Urutkan peristiwa cerita dengan benar!'
-            }[state.currentGameType];
+    document.getElementById('gameInstruction').textContent = {
+        sentence: 'Seret kata-kata ke tempat yang tepat!',
+        matching: 'Cocokkan gambar dengan kata yang tepat!',
+        memory: 'Balik kartu untuk mencocokkan pasangan!',
+        spelling: 'Susun huruf untuk membentuk kata!',
+        sequencing: 'Urutkan peristiwa cerita dengan benar!'
+    }[state.currentGameType];
 
-            dropZone.innerHTML = '';
-            wordPieces.innerHTML = '';
+    dropZone.innerHTML = '';
+    wordPieces.innerHTML = '';
 
-            if (state.currentGameType === 'sentence') {
-                dropZone.innerHTML = '<p style="color: #999;">Seret kata-kata ke sini</p>';
-                wordPieces.innerHTML = gameConfigs.sentence[difficulty].words
-                    .map(word => `<div class="word-piece" draggable="true" role="button" aria-label="Kata ${word}">${sanitize(word)}</div>`).join('');
-            } else if (state.currentGameType === 'matching') {
-                dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
-                const gameGrid = dropZone.querySelector('div');
-                gameConfigs.matching[difficulty].forEach(game => {
-                    const imageCard = document.createElement('div');
-                    imageCard.style.cssText = 'background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; font-size: 48px; border: 2px dashed #ddd;';
-                    imageCard.textContent = game.image;
-                    imageCard.setAttribute('role', 'button');
-                    imageCard.setAttribute('aria-label', `Gambar ${game.word}`);
-                    gameGrid.appendChild(imageCard);
-                    const wordCard = document.createElement('div');
-                    wordCard.className = 'word-piece';
-                    wordCard.textContent = game.word;
-                    wordCard.draggable = true;
-                    wordCard.setAttribute('role', 'button');
-                    wordCard.setAttribute('aria-label', `Kata ${game.word}`);
-                    wordPieces.appendChild(wordCard);
-                });
-            } else if (state.currentGameType === 'memory') {
-                dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
-                const gameGrid = dropZone.querySelector('div');
-                const pairs = [...gameConfigs.memory[difficulty], ...gameConfigs.memory[difficulty]];
-                pairs.sort(() => Math.random() - 0.5);
-                pairs.forEach((pair, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'word-piece';
-                    card.style.cssText = 'background: #FFD54F; padding: 20px; text-align: center; font-size: 24px; border-radius: 8px; cursor: pointer;';
-                    card.dataset.word = pair.word;
-                    card.dataset.index = index;
-                    card.textContent = '❓';
-                    card.setAttribute('role', 'button');
-                    card.setAttribute('aria-label', 'Kartu memori');
-                    card.addEventListener('click', () => flipCard(card));
-                    card.addEventListener('keypress', (e) => e.key === 'Enter' && flipCard(card));
-                    gameGrid.appendChild(card);
-                });
-            } else if (state.currentGameType === 'spelling') {
-                dropZone.innerHTML = '<p style="color: #999;">Seret huruf ke sini</p>';
-                wordPieces.innerHTML = gameConfigs.spelling[difficulty].letters
-                    .map(letter => `<div class="word-piece" draggable="true" role="button" aria-label="Huruf ${letter}">${sanitize(letter)}</div>`).join('');
-            } else if (state.currentGameType === 'sequencing') {
-                dropZone.innerHTML = '<p style="color: #999;">Seret peristiwa ke sini</p>';
-                wordPieces.innerHTML = gameConfigs.sequencing[difficulty].events
-                    .map(event => `<div class="word-piece" draggable="true" role="button" aria-label="Peristiwa ${event}">${sanitize(event)}</div>`).join('');
-            }
-            setupDragAndDrop();
-        }
+    if (state.currentGameType === 'sentence') {
+        dropZone.innerHTML = '<p style="color: #999;">Seret kata-kata ke sini</p>';
+        wordPieces.innerHTML = gameConfigs.sentence[difficulty].words
+            .map(word => `<div class="word-piece" draggable="true" role="button" aria-label="Kata ${word}">${sanitize(word)}</div>`).join('');
+    } else if (state.currentGameType === 'matching') {
+        dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
+        const gameGrid = dropZone.querySelector('div');
+        gameConfigs.matching[difficulty].forEach(game => {
+            const imageCard = document.createElement('div');
+            imageCard.style.cssText = 'background: #f9f9f9; padding: 20px; border-radius: 8px; text-align: center; font-size: 48px; border: 2px dashed #ddd;';
+            imageCard.textContent = game.image;
+            imageCard.setAttribute('role', 'button');
+            imageCard.setAttribute('aria-label', `Gambar ${game.word}`);
+            gameGrid.appendChild(imageCard);
+            const wordCard = document.createElement('div');
+            wordCard.className = 'word-piece';
+            wordCard.textContent = game.word;
+            wordCard.draggable = true;
+            wordCard.setAttribute('role', 'button');
+            wordCard.setAttribute('aria-label', `Kata ${game.word}`);
+            wordPieces.appendChild(wordCard);
+        });
+    } else if (state.currentGameType === 'memory') {
+        dropZone.innerHTML = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;"></div>';
+        const gameGrid = dropZone.querySelector('div');
+        const pairs = [...gameConfigs.memory[difficulty], ...gameConfigs.memory[difficulty]];
+        pairs.sort(() => Math.random() - 0.5);
+        pairs.forEach((pair, index) => {
+            const card = document.createElement('div');
+            card.className = 'word-piece';
+            card.style.cssText = 'background: #FFD54F; padding: 20px; text-align: center; font-size: 24px; border-radius: 8px; cursor: pointer;';
+            card.dataset.word = pair.word;
+            card.dataset.index = index;
+            card.textContent = '❓';
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', 'Kartu memori');
+            card.addEventListener('click', () => flipCard(card));
+            card.addEventListener('keypress', (e) => e.key === 'Enter' && flipCard(card));
+            gameGrid.appendChild(card);
+        });
+    } else if (state.currentGameType === 'spelling') {
+        dropZone.innerHTML = '<p style="color: #999;">Seret huruf ke sini</p>';
+        wordPieces.innerHTML = gameConfigs.spelling[difficulty].letters
+            .map(letter => `<div class="word-piece" draggable="true" role="button" aria-label="Huruf ${letter}">${sanitize(letter)}</div>`).join('');
+    } else if (state.currentGameType === 'sequencing') {
+        dropZone.innerHTML = '<p style="color: #999;">Seret peristiwa ke sini</p>';
+        wordPieces.innerHTML = gameConfigs.sequencing[difficulty].events
+            .map(event => `<div class="word-piece" draggable="true" role="button" aria-label="Peristiwa ${event}">${sanitize(event)}</div>`).join('');
+    }
+    setupDragAndDrop();
+}
 
         function setupDragAndDrop() {
             const wordPieces = document.querySelectorAll('.word-piece');
@@ -2151,34 +2145,41 @@
             }
         }
 
-        function checkAnswer() {
-            const dropZone = document.getElementById('dropZone');
-            const difficulty = document.getElementById('gameDifficulty').value;
-            const config = gameConfigs[state.currentGameType][difficulty];
+     function checkAnswer() {
+    const dropZone = document.getElementById('dropZone');
+    const difficulty = document.getElementById('gameDifficulty').value;
+    const config = gameConfigs[state.currentGameType][difficulty];
 
-            if (state.currentGameType === 'sentence' || state.currentGameType === 'spelling' || state.currentGameType === 'sequencing') {
-                const userAnswer = Array.from(dropZone.children).map(child => child.textContent.trim());
-                const isCorrect = userAnswer.join('') === config.correct.join('');
-                if (isCorrect) {
-                    state.gameProgress = 100;
-                    updateGameProgress(100);
-                    showFeedbackModal('Berhasil', translations[state.currentLanguage].correct);
-                    createConfetti();
-                    playSuccessSound();
-                    if (state.currentUser) {
-                        state.currentUser.wordsLearned = (state.currentUser.wordsLearned || 0) + config.correct.length;
-                        state.currentUser.storyCoins += 10;
-                        saveToStorage();
-                    }
-                } else {
-                    showFeedbackModal('Coba Lagi', translations[state.currentLanguage].incorrect);
-                }
-            } else if (state.currentGameType === 'memory' && state.gameProgress >= 100) {
-                showFeedbackModal('Berhasil', 'Semua pasangan ditemukan! 🎉');
-                createConfetti();
-                playSuccessSound();
-            }
+    if (state.currentGameType === 'sentence' || state.currentGameType === 'spelling' || state.currentGameType === 'sequencing') {
+        const userAnswer = Array.from(dropZone.children).map(child => child.textContent.trim());
+        if (userAnswer.length < config.correct.length) {
+            showFeedbackModal('Peringatan', 'Selesaikan susunan terlebih dahulu!');
+            return;
         }
+        const isCorrect = userAnswer.join(' ') === config.correct.join(' ');
+        if (isCorrect) {
+            state.gameProgress = 100;
+            updateGameProgress(100);
+            showFeedbackModal('Berhasil', translations[state.currentLanguage].correct);
+            createConfetti();
+            playSuccessSound();
+            if (state.currentUser) {
+                state.currentUser.wordsLearned = (state.currentUser.wordsLearned || 0) + config.correct.length;
+                state.currentUser.storyCoins += 10;
+                saveToStorage();
+            }
+        } else {
+            showFeedbackModal('Coba Lagi', translations[state.currentLanguage].incorrect);
+        }
+    } else if (state.currentGameType === 'memory' && state.gameProgress >= 100) {
+        showFeedbackModal('Berhasil', 'Semua pasangan ditemukan! 🎉');
+        createConfetti();
+        playSuccessSound();
+    } else {
+        showFeedbackModal('Peringatan', 'Selesaikan permainan terlebih dahulu!');
+    }
+}
+  
 
         function updateGameProgress(progress) {
             state.gameProgress = progress;
@@ -2329,44 +2330,66 @@
             showFeedbackModal('Berbagi', 'Pencapaian Anda telah dibagikan!');
         }
 
-        // Recording Mode
-        function toggleRecording() {
-            state.isRecording = !state.isRecording;
-            const micBtn = document.getElementById('micBtn');
-            const recordStatus = document.getElementById('recordStatus');
-            const recordingWave = document.getElementById('recordingWave');
-            const playbackBtn = document.getElementById('playbackBtn');
+   function toggleRecording() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showFeedbackModal('Error', 'Perangkat tidak mendukung perekaman audio.');
+        return;
+    }
+    state.isRecording = !state.isRecording;
+    const micBtn = document.getElementById('micBtn');
+    const recordStatus = document.getElementById('recordStatus');
+    const recordingWave = document.getElementById('recordingWave');
+    const playbackBtn = document.getElementById('playbackBtn');
 
-            micBtn.classList.toggle('recording', state.isRecording);
-            recordStatus.textContent = state.isRecording ? 'Merekam...' : 'Tekan untuk mulai merekam';
-            recordingWave.style.display = state.isRecording ? 'flex' : 'none';
-            playbackBtn.style.display = state.isRecording ? 'none' : 'inline-block';
+    micBtn.classList.toggle('recording', state.isRecording);
+    recordStatus.textContent = state.isRecording ? 'Merekam...' : 'Tekan untuk mulai merekam';
+    recordingWave.style.display = state.isRecording ? 'flex' : 'none';
+    playbackBtn.style.display = state.isRecording ? 'none' : 'inline-block';
 
-            if (!state.isRecording) {
-                showFeedbackModal('Rekaman Selesai', 'Rekaman Anda telah disimpan!');
-                document.getElementById('pronunciationFeedback').textContent = 'Pengucapan baik, coba lagi untuk skor lebih tinggi!';
-                document.getElementById('scoreDisplay').style.display = 'block';
-                document.getElementById('scoreDisplay').textContent = '85%';
-            }
-            playClickSound();
-        }
-
-        function playRecording() {
-            showFeedbackModal('Putar', 'Memutar rekaman Anda...');
-            playClickSound();
-        }
-
-        function compareWithNarrator() {
-            showFeedbackModal('Perbandingan', 'Pengucapan Anda 85% mirip dengan narator!');
-        }
-
-        function nextSentence() {
-            document.getElementById('recordSentence').textContent = 'Kiki melihat kupu-kupu yang cantik.';
-            document.getElementById('scoreDisplay').style.display = 'none';
-            document.getElementById('playbackBtn').style.display = 'none';
-            document.getElementById('pronunciationFeedback').textContent = 'Belum ada rekaman.';
-            playClickSound();
-        }
+    if (state.isRecording) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                state.mediaRecorder = new MediaRecorder(stream);
+                state.audioChunks = [];
+                state.mediaRecorder.ondataavailable = e => state.audioChunks.push(e.data);
+                state.mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(state.audioChunks, { type: 'audio/wav' });
+                    state.recordedAudio = URL.createObjectURL(audioBlob);
+                    showFeedbackModal('Rekaman Selesai', 'Rekaman Anda telah disimpan!');
+                    document.getElementById('pronunciationFeedback').textContent = 'Pengucapan baik, coba lagi untuk skor lebih tinggi!';
+                    document.getElementById('scoreDisplay').style.display = 'block';
+                    document.getElementById('scoreDisplay').textContent = '85%';
+                };
+                state.mediaRecorder.start();
+            })
+            .catch(e => {
+                console.error('Recording error:', e);
+                showFeedbackModal('Error', 'Gagal memulai perekaman. Izinkan akses mikrofon.');
+                state.isRecording = false;
+                micBtn.classList.remove('recording');
+                recordStatus.textContent = 'Tekan untuk mulai merekam';
+                recordingWave.style.display = 'none';
+            });
+    } else if (state.mediaRecorder) {
+        state.mediaRecorder.stop();
+        state.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    }
+    playClickSound();
+}
+      function playRecording() {
+    if (state.recordedAudio) {
+        const audio = new Audio(state.recordedAudio);
+        audio.play()
+            .then(() => showFeedbackModal('Putar', 'Memutar rekaman Anda...'))
+            .catch(e => {
+                console.error('Playback error:', e);
+                showFeedbackModal('Error', 'Gagal memutar rekaman.');
+            });
+    } else {
+        showFeedbackModal('Peringatan', 'Belum ada rekaman untuk diputar!');
+    }
+    playClickSound();
+}
 
         // UI Interactions
         function showDefinition(word) {
@@ -2706,11 +2729,11 @@
             }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            init();
-            setTimeout(startTutorial, 1000);
-        });
-    </script>
-</body>
-</html>
+                // Initialize
+                document.addEventListener('DOMContentLoaded', () => {
+                    init();
+                    setTimeout(startTutorial, 1000);
+                });
+            </script>
+        </body>
+        </html>
