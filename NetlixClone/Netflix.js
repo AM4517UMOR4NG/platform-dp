@@ -27,7 +27,7 @@ window.addEventListener('scroll', () => {
 playButtonHero.addEventListener('click', () => {
     heroContent.classList.add('hidden');
     trailerContainer.classList.remove('hidden');
-    const baseUrl = 'https://www.youtube.com/embed/nW948Va-l10'; // URL trailer Loki
+    const baseUrl = 'https://www.youtube.com/embed/w4drq_jLd20'; // URL trailer baru
     heroIframe.src = `${baseUrl}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0`;
     heroSection.style.backgroundImage = 'none';
 });
@@ -43,10 +43,10 @@ backToHeroButton.addEventListener('click', () => {
 let currentPlayingIframe = null;
 
 movieCards.forEach(card => {
-    card.addEventListener('click', () => { // Ubah ke 'click' untuk memudahkan pengujian
+    card.addEventListener('click', () => {
         const movieTrailerUrl = card.dataset.trailerUrl;
         if (movieTrailerUrl) {
-            movieDetailPopup.style.top = `${window.scrollY + 50}px`; // Posisi tetap di atas
+            movieDetailPopup.style.top = `${window.scrollY + 50}px`;
             movieDetailPopup.style.left = '50%';
             movieDetailPopup.style.transform = 'translateX(-50%)';
             movieDetailPopup.classList.add('show');
