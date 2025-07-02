@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Pro Dashboard</title>
+    
+    <!-- Meta tags for PWA -->
+    <meta name="description" content="Modern Analytics Dashboard with Real-time Data Visualization">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-animation">
+            <div class="loading-circle"></div>
+            <div class="loading-text">Loading Analytics...</div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app" id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="ph ph-chart-bar"></i>
+                    <span>Analytics Pro</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="dashboard">
+                        <i class="ph ph-house"></i>
+                        <span>Dashboard</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="analytics">
+                        <i class="ph ph-chart-line"></i>
+                        <span>Analytics</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="reports">
+                        <i class="ph ph-file-text"></i>
+                        <span>Reports</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="users">
+                        <i class="ph ph-users"></i>
+                        <span>Users</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="settings">
+                        <i class="ph ph-gear"></i>
+                        <span>Settings</span>
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="User" class="user-avatar">
+                    <div class="user-info">
+                        <div class="user-name">Alogo Situmorang</div>
+                        <div class="user-role">Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Dashboard Overview</h1>
+                    <p class="page-subtitle">Welcome back! Here's what's happening.</p>
+                </div>
+                
+                <div class="header-right">
+                    <div class="search-container">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" placeholder="Search..." class="search-input">
+                    </div>
+                    
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="ph ph-sun theme-icon-light"></i>
+                        <i class="ph ph-moon theme-icon-dark"></i>
+                    </button>
+                    
+                    <div class="notifications">
+                        <button class="notification-btn">
+                            <i class="ph ph-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <section class="content" id="dashboard">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="ph ph-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" data-count="12485">0</div>
+                            <div class="stat-label">Active Users</div>
+                            <div class="stat-change positive">
+                                <i class="ph ph-arrow-up"></i>
+                                <span>12.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="ph ph-currency-dollar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" data-count="45678">$0</div>
+                            <div class="stat-label">Revenue</div>
+                            <div class="stat-change positive">
+                                <i class="ph ph-arrow-up"></i>
+                                <span>8.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="ph ph-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" data-count="8924">0</div>
+                            <div class="stat-label">Orders</div>
+                            <div class="stat-change negative">
+                                <i class="ph ph-arrow-down"></i>
+                                <span>3.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="ph ph-chart-bar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" data-count="67">0%</div>
+                            <div class="stat-label">Conversion</div>
+                            <div class="stat-change positive">
+                                <i class="ph ph-arrow-up"></i>
+                                <span>5.4%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card large">
+                        <div class="chart-header">
+                            <h3>Revenue Overview</h3>
+                            <div class="chart-actions">
+                                <select class="chart-filter">
+                                    <option>Last 7 days</option>
+                                    <option>Last 30 days</option>
+                                    <option>Last 3 months</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Traffic Sources</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="activity-section">
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3>Recent Activity</h3>
+                            <button class="btn-secondary">View All</button>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon blue">
+                                    <i class="ph ph-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">New user registered: <strong>John Doe</strong></div>
+                                    <div class="activity-time">2 minutes ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon green">
+                                    <i class="ph ph-shopping-cart"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">Order #12345 completed successfully</div>
+                                    <div class="activity-time">15 minutes ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon purple">
+                                    <i class="ph ph-chart-line"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">Analytics report generated</div>
+                                    <div class="activity-time">1 hour ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions-card">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn">
+                                <i class="ph ph-plus"></i>
+                                <span>Add User</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="ph ph-download"></i>
+                                <span>Export Data</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="ph ph-gear"></i>
+                                <span>Settings</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="ph ph-question"></i>
+                                <span>Help</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
