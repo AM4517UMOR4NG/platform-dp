@@ -6,8 +6,7 @@
 
 ## 👨‍💻 **Profile**
 
-**Nama**: Alogo Situmorang  
-**NIM**: 235314088  
+**Nama**: Alogo Situmorang   
 **Mata Kuliah**: Platform Development  
 
 ---
@@ -274,15 +273,6 @@ npm run build
 
 ---
 
-## 🏆 **Achievements**
-
-- ✅ **Full-Stack Development**: PHP + MySQL + JavaScript
-- ✅ **Responsive Design**: Mobile-first approach
-- ✅ **Security Implementation**: Authentication & input validation
-- ✅ **Modern UI/UX**: Contemporary design patterns
-- ✅ **Database Management**: Proper schema design
-- ✅ **API Integration**: YouTube embed integration
-
 ---
 
 ## 🔮 **Roadmap & Future Enhancements**
@@ -296,14 +286,6 @@ npm run build
 - [ ] Migrate ke modern framework (React/Vue)
 - [ ] Add real-time features dengan WebSockets
 - [ ] Implement microservices architecture
-
----
-
-## 📞 **Contact & Links**
-
-- 📧 **Email**: [your-email@example.com]
-- 💼 **LinkedIn**: [Your LinkedIn Profile]
-- 🐙 **GitHub**: [Your GitHub Profile]
 
 ---
 
@@ -323,9 +305,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-### **⭐ Jika proyek ini bermanfaat, jangan lupa berikan star! ⭐**
+### **⭐Suiiii⭐**
 
-**Made with ❤️ by Alogo Situmorang**
+**Made with by Alogo Situmorang**
 
 ![Visitor Count](https://visitor-badge.glitch.me/badge?page_id=platform-dp-portfolio)
 
