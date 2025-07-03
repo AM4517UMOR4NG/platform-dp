@@ -309,6 +309,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with by Alogo Situmorang**
 
-![Visitor Count](https://visitor-badge.glitch.me/badge?page_id=platform-dp-portfolio)
-
-</div>
