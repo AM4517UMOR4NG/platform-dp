@@ -1,4 +1,4 @@
-# 🚀 **Platform Development Portfolio**
+# 🚀 **Platform**
 
 > **Sebuah koleksi lengkap proyek-proyek web development yang menunjukkan perjalanan pembelajaran dari HTML dasar hingga aplikasi full-stack yang kompleks.**
 
