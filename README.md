@@ -1,6 +1,6 @@
 # 🚀 **Mata Pelajaran Platform**
 
-> **Sebuah koleksi lengkp proyek-proyek web development yang menunjukkan perjalanan pembelajaran dari HTML dasar hingga aplikasi full-stack yang kompleks.**
+> **Sebuah koleksi lengkp proyek-proyek web developmen yang menunjukkan perjalanan pembelajaran dari HTML dasar hingga aplikasi full-stack yang kompleks.**
 
 ---
 
