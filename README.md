@@ -1,4 +1,4 @@
-# 🚀 **Mata Pelajaran Platform**
+# 🚀 ** MatKul Platform**
 
 > **Sebuah koleksi lengkp proyek-proyek web developmen yang menunjukkan perjalanan pembelajaran dari HTML dasar hingga aplikasi full-stack yang kompleks.**
 
